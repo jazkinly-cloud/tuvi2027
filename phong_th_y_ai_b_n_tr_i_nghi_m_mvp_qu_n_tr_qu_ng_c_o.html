@@ -1,0 +1,2135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PHONG THỦY AI — Bản Trải Nghiệm MVP & Quản Trị Quảng Cáo</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #0B0F19;
+      --bg-card: #131B2E;
+      --bg-surface: #1A243B;
+      --gold-primary: #D4AF37;
+      --gold-light: #F3E5AB;
+      --crimson-accent: #8B1E1E;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .font-serif-oriental {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA7C11 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gold-border {
+      border: 1px solid rgba(212, 175, 55, 0.28);
+    }
+    .gold-border-strong {
+      border: 1px solid rgba(212, 175, 55, 0.65);
+    }
+    .oriental-card {
+      background: linear-gradient(180deg, rgba(26, 36, 59, 0.92) 0%, rgba(19, 27, 46, 0.96) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .crimson-pill {
+      background: linear-gradient(135deg, #991B1B 0%, #6B1111 100%);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+    }
+    .gold-btn {
+      background: linear-gradient(135deg, #E5C158 0%, #C59B27 100%);
+      color: #0B0F19;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .gold-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+    .gold-btn:active {
+      transform: translateY(0);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(212, 175, 55, 0.35);
+      border-radius: 9999px;
+    }
+    .node-pulse {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    .node-pulse:hover {
+      filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.6));
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- TOP DEVICE MODE & BAR -->
+  <header class="sticky top-0 z-30 bg-[#0B0F19]/95 backdrop-blur-md border-b border-amber-500/20 px-3 py-2.5">
+    <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl crimson-pill flex items-center justify-center shadow-inner">
+          <svg class="w-5 h-5 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 2a5 5 0 0 1 0 10 5 5 0 0 0 0 10"/>
+            <circle cx="12" cy="7" r="1.5" fill="currentColor"/>
+            <circle cx="12" cy="17" r="1.5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-serif-oriental text-lg font-bold tracking-wide gold-gradient-text leading-none">PHONG THỦY AI</h1>
+            <span class="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 font-semibold">MVP v1.0</span>
+          </div>
+          <p class="text-[11px] text-slate-400">Hệ thống Ngũ Hành • Bát Trạch • Bát Tự Kiểm Chứng</p>
+        </div>
+      </div>
+
+      <!-- Mode Switcher: Mobile App View vs Ad Admin CMS vs Responsive -->
+      <div class="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-lg border border-slate-800">
+        <button id="btnViewMobile" type="button" class="px-2.5 py-1 rounded text-xs font-medium transition bg-amber-500/20 text-amber-300 border border-amber-500/40">
+          📱 Khung Điện Thoại
+        </button>
+        <button id="btnViewFull" type="button" class="px-2.5 py-1 rounded text-xs font-medium transition text-slate-400 hover:text-slate-200">
+          🖥️ Toàn Màn Hình
+        </button>
+        <button id="btnQuickAdmin" type="button" class="px-2.5 py-1 rounded text-xs font-medium transition bg-red-950/70 text-amber-200 border border-amber-500/30 hover:bg-red-900/60">
+          ⚙️ Quản Trị Quảng Cáo
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 flex justify-center items-start py-3 px-2 sm:px-4">
+    <div id="deviceWrapper" class="w-full max-w-[440px] transition-all duration-300 bg-[#0E1422] rounded-3xl border border-amber-500/25 shadow-2xl overflow-hidden flex flex-col min-h-[780px]">
+
+      <!-- STATUS BAR SIMULATION FOR MOBILE -->
+      <div class="bg-[#090D16] px-4 py-1.5 flex items-center justify-between text-[11px] text-slate-400 border-b border-slate-800/80">
+        <span id="clockDisplay">09:41</span>
+        <span class="text-amber-400/90 font-medium flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+          Rule-Engine v1.0 • Không dùng AI bịa dữ liệu
+        </span>
+        <span id="adTimerBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">Ad: Sẵn sàng</span>
+      </div>
+
+      <!-- DISCLAIMER BANNER (COLLAPSIBLE / STICKY INFO) -->
+      <div class="bg-amber-950/30 border-b border-amber-500/20 px-3.5 py-1.5 flex items-center justify-between gap-2 text-[11px] text-amber-200/90">
+        <span>⚖️ <strong> Nguyên tắc:</strong> Tính toán bằng thuật toán truyền thống, AI chỉ diễn giải. Nội dung mang tính tham khảo văn hóa.</span>
+      </div>
+
+      <!-- VIEWPORT CONTENT -->
+      <div id="screenContainer" class="flex-1 overflow-y-auto custom-scrollbar p-3.5 space-y-4">
+
+        <!-- ==========================================
+             SCREEN 1: TRANG CHỦ (HOME)
+        =========================================== -->
+        <section id="screen-home" class="space-y-4 animate-fade">
+          <!-- Hero Card: Quick User Profile / Today's Lunar Snapshot -->
+          <div class="oriental-card rounded-2xl p-4 relative overflow-hidden">
+            <div class="flex items-start justify-between gap-3">
+              <div class="space-y-1">
+                <span class="inline-flex items-center gap-1 text-[11px] uppercase tracking-wider text-amber-300 font-semibold">
+                  ✨ Lịch Vạn Niên & Khí Vận Hôm Nay
+                </span>
+                <h2 class="font-serif-oriental text-xl font-bold text-white" id="homeTodayTitle">Thứ Bảy, 24/10/2026 (Dương lịch)</h2>
+                <p class="text-xs text-slate-300" id="homeLunarSubtitle">Âm lịch tham khảo: Ngày Giáp Tý • Tháng Quý Dậu • Năm Bính Ngọ (Thiên Hà Thủy)</p>
+              </div>
+              <div class="w-12 h-12 rounded-2xl crimson-pill flex flex-col items-center justify-center shrink-0 text-amber-300 font-bold">
+                <span class="text-[10px] uppercase text-amber-200/80">Hành</span>
+                <span class="text-sm">THỦY</span>
+              </div>
+            </div>
+
+            <div class="mt-3 pt-3 border-t border-slate-700/60 flex flex-wrap items-center justify-between gap-2">
+              <div class="text-xs text-slate-300">
+                <span class="text-amber-300 font-medium">Bản mệnh đang lưu:</span>
+                <span id="homeSavedProfileText" class="ml-1 text-white font-semibold">1997 • Đinh Sửu (Giản Hạ Thủy)</span>
+              </div>
+              <button type="button" data-nav="banmenh" class="gold-btn text-xs px-3 py-1.5 rounded-lg">
+                Đổi ngày sinh →
+              </button>
+            </div>
+          </div>
+
+          <!-- 10 MAIN FEATURE GRID (THEO ĐÚNG YÊU CẦU MỤC III.1) -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-xs font-semibold uppercase tracking-wider text-amber-300/90">10 Chức Năng Trung Tâm</h3>
+              <span class="text-[11px] text-slate-400">Chạm để tra cứu</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+              <button type="button" data-nav="banmenh" class="oriental-card hover:border-amber-400/60 rounded-xl p-3 text-left transition flex flex-col justify-between">
+                <span class="text-xl mb-1">🧭</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">1. Bản mệnh của tôi</div>
+                  <div class="text-[10px] text-slate-400">Nạp âm • Cung phi • Bát tự</div>
+                </div>
+              </button>
+              <button type="button" data-nav="nguhanh" class="oriental-card hover:border-amber-400/60 rounded-xl p-3 text-left transition flex flex-col justify-between">
+                <span class="text-xl mb-1">☯️</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">2. Khám phá Ngũ hành</div>
+                  <div class="text-[10px] text-slate-400">Kim • Mộc • Thủy • Hỏa • Thổ</div>
+                </div>
+              </button>
+              <button type="button" data-nav="nguhanh" data-subfocus="diagram" class="oriental-card hover:border-amber-400/60 rounded-xl p-3 text-left transition flex flex-col justify-between">
+                <span class="text-xl mb-1">🔄</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">3. Tương sinh tương khắc</div>
+                  <div class="text-[10px] text-slate-400">Sơ đồ vòng tròn trực quan</div>
+                </div>
+              </button>
+              <button type="button" data-nav="mausac" class="oriental-card hover:border-amber-400/60 rounded-xl p-3 text-left transition flex flex-col justify-between">
+                <span class="text-xl mb-1">🎨</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">4. Màu sắc hợp mệnh</div>
+                  <div class="text-[10px] text-slate-400">Xe cộ, trang phục, đồ dùng</div>
+                </div>
+              </button>
+              <button type="button" data-nav="tuoihop" class="oriental-card hover:border-amber-400/60 rounded-xl p-3 text-left transition flex flex-col justify-between">
+                <span class="text-xl mb-1">🤝</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">5. Xem tuổi hợp</div>
+                  <div class="text-[10px] text-slate-400">Hôn nhân, đối tác, xây nhà</div>
+                </div>
+              </button>
+              <button type="button" data-nav="tuvi" data-tab="tailoc" class="oriental-card hover:border-amber-400/60 rounded-xl p-3 text-left transition flex flex-col justify-between">
+                <span class="text-xl mb-1">💼</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">6. Tài lộc & Sự nghiệp</div>
+                  <div class="text-[10px] text-slate-400">Định hướng ngành nghề</div>
+                </div>
+              </button>
+              <button type="button" data-nav="nhao" class="oriental-card hover:border-amber-400/60 rounded-xl p-3 text-left transition flex flex-col justify-between">
+                <span class="text-xl mb-1">🏠</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">7. Phong thủy nhà ở</div>
+                  <div class="text-[10px] text-slate-400">Bát trạch, hướng cửa, nội thất</div>
+                </div>
+              </button>
+              <button type="button" data-nav="tuvi" data-tab="ngaytot" class="oriental-card hover:border-amber-400/60 rounded-xl p-3 text-left transition flex flex-col justify-between">
+                <span class="text-xl mb-1">📅</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">8. Xem ngày tốt</div>
+                  <div class="text-[10px] text-slate-400">Hoàng đạo, xung hợp ngày</div>
+                </div>
+              </button>
+              <button type="button" data-nav="tuvi" data-tab="homnay" class="oriental-card hover:border-amber-400/60 rounded-xl p-3 text-left transition flex flex-col justify-between">
+                <span class="text-xl mb-1">📜</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">9. Tử vi hôm nay</div>
+                  <div class="text-[10px] text-slate-400">Vận trình tham khảo ngày</div>
+                </div>
+              </button>
+              <button type="button" data-nav="ai" class="oriental-card hover:border-amber-400/60 rounded-xl p-3 text-left transition flex flex-col justify-between border-amber-500/40 bg-amber-950/20">
+                <span class="text-xl mb-1">🤖</span>
+                <div>
+                  <div class="text-xs font-semibold text-amber-300">10. Trợ lý Phong thủy AI</div>
+                  <div class="text-[10px] text-slate-300">Hỏi đáp có kiểm chứng</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- NATIVE SPONSOR AD SLOT (DIRECT PARTNER AD DEMO) -->
+          <div id="homeSponsorSlot" class="rounded-2xl bg-gradient-to-r from-[#172036] to-[#1F172A] border border-amber-500/30 p-3.5 relative">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                Quảng cáo • Đối tác trực tiếp
+              </span>
+              <span class="text-[10px] text-slate-400" id="sponsorImpressionCounter">Lượt hiển thị: 1</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-400/30 flex items-center justify-center text-2xl shrink-0">
+                📿
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-xs font-bold text-white truncate" id="sponsorTitle">Trầm Hương & Đá Quý Minh Tâm Việt Nam</h4>
+                <p class="text-[11px] text-slate-300 line-clamp-2" id="sponsorDesc">Bộ sưu tập vòng đá tự nhiên chế tác theo màu sắc Ngũ Hành tương ứng từng bản mệnh. Kiểm định chất lượng rõ ràng.</p>
+              </div>
+              <button type="button" id="btnSponsorClick" class="shrink-0 px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-semibold">
+                Tìm hiểu
+              </button>
+            </div>
+          </div>
+
+          <!-- QUICK INSIGHT: PHÂN BIỆT 3 TRƯỜNG PHÁI -->
+          <div class="oriental-card rounded-2xl p-3.5 space-y-2">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-amber-300">Vì sao kết quả các nơi khác nhau?</h3>
+              <span class="text-[10px] text-emerald-400 font-medium">Kiến thức cốt lõi</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Nhiều ứng dụng gộp chung một quy tắc duy nhất gây nhầm lẫn. <strong>PHONG THỦY AI</strong> tách bạch rõ 3 hệ thống:
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="font-semibold text-amber-300">1. Nạp Âm (Năm sinh)</div>
+                <div class="text-slate-400 mt-0.5">60 Hoa Giáp (VD: 1997 Đinh Sửu là Giản Hạ Thủy). Giống nhau cho cả Nam & Nữ.</div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="font-semibold text-amber-300">2. Cung Phi (Bát Trạch)</div>
+                <div class="text-slate-400 mt-0.5">Tính theo Năm sinh + Giới tính để xem hướng nhà, hướng bếp (Đông/Tây tứ trạch).</div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="font-semibold text-amber-300">3. Nhật Chủ (Bát Tự)</div>
+                <div class="text-slate-400 mt-0.5">Lấy Thiên Can của Ngày sinh làm trung tâm, xét sự cân bằng 4 trụ Năm-Tháng-Ngày-Giờ.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SCREEN 2: XEM BẢN MỆNH & MÀU SẮC (BIRTH LOOKUP)
+        =========================================== -->
+        <section id="screen-banmenh" class="space-y-4 hidden animate-fade">
+          <div class="oriental-card rounded-2xl p-4 space-y-3.5">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+              <div>
+                <h2 class="font-serif-oriental text-lg font-bold gold-gradient-text">Tra Cứu Bản Mệnh Đa Trường Phái</h2>
+                <p class="text-xs text-slate-400">Tính toán chính xác bằng thuật toán Can Chi, Nạp Âm, Bát Trạch & Nhật Chủ</p>
+              </div>
+              <span class="text-xs px-2 py-1 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Chính xác 100% quy tắc</span>
+            </div>
+
+            <!-- Form Input -->
+            <form id="formBanMenh" class="space-y-3">
+              <div class="grid grid-cols-3 gap-2.5">
+                <div>
+                  <label for="inputDay" class="block text-[11px] text-slate-300 mb-1">Ngày sinh</label>
+                  <input id="inputDay" type="number" min="1" max="31" value="15" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-lg px-2.5 py-2 text-xs text-white outline-none" />
+                </div>
+                <div>
+                  <label for="inputMonth" class="block text-[11px] text-slate-300 mb-1">Tháng sinh</label>
+                  <input id="inputMonth" type="number" min="1" max="12" value="8" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-lg px-2.5 py-2 text-xs text-white outline-none" />
+                </div>
+                <div>
+                  <label for="inputYear" class="block text-[11px] text-slate-300 mb-1">Năm sinh</label>
+                  <input id="inputYear" type="number" min="1920" max="2040" value="1997" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-lg px-2.5 py-2 text-xs text-white outline-none" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div>
+                  <label for="inputGender" class="block text-[11px] text-slate-300 mb-1">Giới tính (Cần cho Cung Phi)</label>
+                  <select id="inputGender" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-lg px-2.5 py-2 text-xs text-white outline-none">
+                    <option value="nam">Nam mạng</option>
+                    <option value="nu">Nữ mạng</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="inputCalendar" class="block text-[11px] text-slate-300 mb-1">Loại lịch nhập</label>
+                  <select id="inputCalendar" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-lg px-2.5 py-2 text-xs text-white outline-none">
+                    <option value="duong">Lịch Dương (Phổ thông)</option>
+                    <option value="am">Lịch Âm (Đã quy đổi)</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="inputHour" class="block text-[11px] text-slate-300 mb-1">Giờ sinh (Xem Bát Tự)</label>
+                  <select id="inputHour" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-lg px-2.5 py-2 text-xs text-white outline-none">
+                    <option value="ty">Giờ Tý (23h - 01h)</option>
+                    <option value="suu">Giờ Sửu (01h - 03h)</option>
+                    <option value="dan">Giờ Dần (03h - 05h)</option>
+                    <option value="mao">Giờ Mão (05h - 07h)</option>
+                    <option value="thin" selected>Giờ Thìn (07h - 09h)</option>
+                    <option value="ti">Giờ Tỵ (09h - 11h)</option>
+                    <option value="ngo">Giờ Ngọ (11h - 13h)</option>
+                    <option value="mui">Giờ Mùi (13h - 15h)</option>
+                    <option value="than">Giờ Thân (15h - 17h)</option>
+                    <option value="dau">Giờ Dậu (17h - 19h)</option>
+                    <option value="tuat">Giờ Tuất (19h - 21h)</option>
+                    <option value="hoi">Giờ Hợi (21h - 23h)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Quick Year Presets -->
+              <div class="flex flex-wrap items-center gap-1.5 pt-1">
+                <span class="text-[11px] text-slate-400">Chọn nhanh năm:</span>
+                <button type="button" data-preset-year="1989" class="px-2 py-0.5 text-[11px] rounded bg-slate-800 hover:bg-slate-700 text-slate-200">1989 (Kỷ Tỵ)</button>
+                <button type="button" data-preset-year="1992" class="px-2 py-0.5 text-[11px] rounded bg-slate-800 hover:bg-slate-700 text-slate-200">1992 (Nhâm Thân)</button>
+                <button type="button" data-preset-year="1996" class="px-2 py-0.5 text-[11px] rounded bg-slate-800 hover:bg-slate-700 text-slate-200">1996 (Bính Tý)</button>
+                <button type="button" data-preset-year="1997" class="px-2 py-0.5 text-[11px] rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">1997 (Đinh Sửu)</button>
+                <button type="button" data-preset-year="2000" class="px-2 py-0.5 text-[11px] rounded bg-slate-800 hover:bg-slate-700 text-slate-200">2000 (Canh Thìn)</button>
+              </div>
+
+              <button type="submit" class="w-full gold-btn py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-lg">
+                🔍 Phân Tích Bản Mệnh & Lưu Hồ Sơ
+              </button>
+            </form>
+          </div>
+
+          <!-- SCHOOL COMPARISON TABS -->
+          <div class="oriental-card rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-amber-300">Kết Quả Theo 3 Trường Phái</h3>
+              <span id="bmSummaryBadge" class="text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">Đinh Sửu • 1997</span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+              <button type="button" data-school-tab="napam" class="school-tab-btn py-1.5 px-2 rounded-lg text-[11px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                1. Nạp Âm (Năm Sinh)
+              </button>
+              <button type="button" data-school-tab="cungphi" class="school-tab-btn py-1.5 px-2 rounded-lg text-[11px] font-semibold text-slate-400 hover:text-white">
+                2. Cung Phi (Bát Trạch)
+              </button>
+              <button type="button" data-school-tab="battu" class="school-tab-btn py-1.5 px-2 rounded-lg text-[11px] font-semibold text-slate-400 hover:text-white">
+                3. Bát Tự (Nhật Chủ)
+              </button>
+            </div>
+
+            <!-- Dynamic Result Box -->
+            <div id="banMenhResultContent" class="space-y-3 pt-1">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- COLOR MATCHING SECTION (MỤC III.4) -->
+          <div id="colorLookupAnchor" class="oriental-card rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-300">Bảng Màu Sắc Hợp Mệnh (Tham Khảo)</h3>
+                <p class="text-[11px] text-slate-400">Áp dụng cho xe cộ, trang phục, phụ kiện theo hành đang chọn</p>
+              </div>
+              <select id="colorSchoolSelect" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-[11px] text-amber-300 outline-none">
+                <option value="napam">Theo Hành Nạp Âm</option>
+                <option value="cungphi">Theo Hành Cung Phi</option>
+                <option value="battu">Theo Nhật Chủ Bát Tự</option>
+              </select>
+            </div>
+
+            <div id="colorRecommendationBox" class="space-y-2.5">
+              <!-- Populated by JS -->
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-[11px] text-slate-400">
+              💡 <strong>Lưu ý chuẩn mực:</strong> Màu sắc phong thủy mang ý nghĩa hỗ trợ tâm lý, thẩm mỹ và hài hòa văn hóa phương Đông; <em>không có tác dụng bảo đảm tuyệt đối về tài lộc, sức khỏe hay thành công</em>.
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SCREEN 3: NGŨ HÀNH TƯƠNG SINH TƯƠNG KHẮC (FIVE ELEMENTS)
+        =========================================== -->
+        <section id="screen-nguhanh" class="space-y-4 hidden animate-fade">
+          <div class="oriental-card rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="font-serif-oriental text-lg font-bold gold-gradient-text">Sơ Đồ Ngũ Hành Tương Sinh & Tương Khắc</h2>
+                <p class="text-xs text-slate-400">Chạm vào từng hành (Kim, Mộc, Thủy, Hỏa, Thổ) trên sơ đồ để xem quy luật</p>
+              </div>
+            </div>
+
+            <!-- Interactive SVG Diagram -->
+            <div class="bg-[#090D16] rounded-2xl p-3 border border-slate-800 flex flex-col items-center">
+              <svg id="svgNguHanh" viewBox="0 0 340 310" class="w-full max-w-[320px] h-auto select-none">
+                <defs>
+                  <marker id="arrowSinh" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                    <path d="M0,0 L0,6 L7,3 z" fill="#D4AF37" />
+                  </marker>
+                  <marker id="arrowKhac" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+                    <path d="M0,0 L0,6 L6,3 z" fill="#EF4444" />
+                  </marker>
+                </defs>
+
+                <!-- Outer Circle Guide -->
+                <circle cx="170" cy="158" r="108" fill="none" stroke="rgba(212,175,55,0.18)" stroke-width="1.5" stroke-dasharray="4 4" />
+
+                <!-- TƯƠNG SINH ARROWS (Pentagon Perimeter: Hỏa -> Thổ -> Kim -> Thủy -> Mộc -> Hỏa) -->
+                <!-- Hỏa (170,50) -> Thổ (272,124) -->
+                <line x1="196" y1="68" x2="248" y2="106" stroke="#D4AF37" stroke-width="2" marker-end="url(#arrowSinh)" />
+                <!-- Thổ (272,124) -> Kim (233,245) -->
+                <line x1="262" y1="154" x2="243" y2="215" stroke="#D4AF37" stroke-width="2" marker-end="url(#arrowSinh)" />
+                <!-- Kim (233,245) -> Thủy (107,245) -->
+                <line x1="200" y1="245" x2="140" y2="245" stroke="#D4AF37" stroke-width="2" marker-end="url(#arrowSinh)" />
+                <!-- Thủy (107,245) -> Mộc (68,124) -->
+                <line x1="97" y1="215" x2="78" y2="154" stroke="#D4AF37" stroke-width="2" marker-end="url(#arrowSinh)" />
+                <!-- Mộc (68,124) -> Hỏa (170,50) -->
+                <line x1="92" y1="106" x2="144" y2="68" stroke="#D4AF37" stroke-width="2" marker-end="url(#arrowSinh)" />
+
+                <!-- TƯƠNG KHẮC ARROWS (Inner Star: Hỏa->Kim, Kim->Mộc, Mộc->Thổ, Thổ->Thủy, Thủy->Hỏa) -->
+                <!-- Hỏa (170,50) -> Kim (233,245) -->
+                <line x1="179" y1="79" x2="222" y2="214" stroke="#EF4444" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrowKhac)" />
+                <!-- Kim (233,245) -> Mộc (68,124) -->
+                <line x1="208" y1="227" x2="95" y2="144" stroke="#EF4444" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrowKhac)" />
+                <!-- Mộc (68,124) -> Thổ (272,124) -->
+                <line x1="99" y1="124" x2="239" y2="124" stroke="#EF4444" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrowKhac)" />
+                <!-- Thổ (272,124) -> Thủy (107,245) -->
+                <line x1="247" y1="142" x2="134" y2="225" stroke="#EF4444" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrowKhac)" />
+                <!-- Thủy (107,245) -> Hỏa (170,50) -->
+                <line x1="117" y1="215" x2="160" y2="81" stroke="#EF4444" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrowKhac)" />
+
+                <!-- ELEMENT NODES -->
+                <!-- HỎA (Top) -->
+                <g class="node-pulse" data-element="Hỏa" transform="translate(170,50)">
+                  <circle r="28" fill="#7F1D1D" stroke="#F87171" stroke-width="2.5" />
+                  <text y="-2" text-anchor="middle" fill="#FEF2F2" font-size="12" font-weight="bold">HỎA</text>
+                  <text y="12" text-anchor="middle" fill="#FCA5A5" font-size="9">Lửa • Nhiệt</text>
+                </g>
+
+                <!-- THỔ (Right Top) -->
+                <g class="node-pulse" data-element="Thổ" transform="translate(272,124)">
+                  <circle r="28" fill="#78350F" stroke="#FBBF24" stroke-width="2.5" />
+                  <text y="-2" text-anchor="middle" fill="#FFFBEB" font-size="12" font-weight="bold">THỔ</text>
+                  <text y="12" text-anchor="middle" fill="#FDE68A" font-size="9">Đất • Nuôi</text>
+                </g>
+
+                <!-- KIM (Right Bottom) -->
+                <g class="node-pulse" data-element="Kim" transform="translate(233,245)">
+                  <circle r="28" fill="#334155" stroke="#E2E8F0" stroke-width="2.5" />
+                  <text y="-2" text-anchor="middle" fill="#F8FAFC" font-size="12" font-weight="bold">KIM</text>
+                  <text y="12" text-anchor="middle" fill="#CBD5E1" font-size="9">Kim khí</text>
+                </g>
+
+                <!-- THỦY (Left Bottom) -->
+                <g class="node-pulse" data-element="Thủy" transform="translate(107,245)">
+                  <circle r="28" fill="#1E3A8A" stroke="#60A5FA" stroke-width="2.5" />
+                  <text y="-2" text-anchor="middle" fill="#EFF6FF" font-size="12" font-weight="bold">THỦY</text>
+                  <text y="12" text-anchor="middle" fill="#93C5FD" font-size="9">Nước • Lưu</text>
+                </g>
+
+                <!-- MỘC (Left Top) -->
+                <g class="node-pulse" data-element="Mộc" transform="translate(68,124)">
+                  <circle r="28" fill="#064E3B" stroke="#34D399" stroke-width="2.5" />
+                  <text y="-2" text-anchor="middle" fill="#ECFDF5" font-size="12" font-weight="bold">MỘC</text>
+                  <text y="12" text-anchor="middle" fill="#6EE7B7" font-size="9">Cây • Sinh</text>
+                </g>
+              </svg>
+
+              <div class="flex items-center gap-4 text-[11px] mt-1">
+                <span class="flex items-center gap-1.5 text-amber-300"><span class="w-4 h-0.5 bg-amber-400 inline-block"></span> Vòng ngoài: Tương Sinh (Nuôi dưỡng)</span>
+                <span class="flex items-center gap-1.5 text-red-400"><span class="w-4 h-0.5 bg-red-400 border-b border-dashed inline-block"></span> Ngôi sao: Tương Khắc (Chế ước)</span>
+              </div>
+            </div>
+
+            <!-- Element Selector Buttons -->
+            <div class="grid grid-cols-5 gap-1.5">
+              <button type="button" data-select-el="Kim" class="el-btn py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-200 border border-slate-600">⚪ Kim</button>
+              <button type="button" data-select-el="Mộc" class="el-btn py-2 rounded-xl text-xs font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-600/50">🟢 Mộc</button>
+              <button type="button" data-select-el="Thủy" class="el-btn py-2 rounded-xl text-xs font-bold bg-blue-950/80 text-blue-300 border border-blue-500/50">🔵 Thủy</button>
+              <button type="button" data-select-el="Hỏa" class="el-btn py-2 rounded-xl text-xs font-bold bg-red-950/80 text-red-300 border border-red-500/50">🔴 Hỏa</button>
+              <button type="button" data-select-el="Thổ" class="el-btn py-2 rounded-xl text-xs font-bold bg-amber-950/80 text-amber-300 border border-amber-500/50">🟡 Thổ</button>
+            </div>
+
+            <!-- Selected Element Detail Card -->
+            <div id="nguHanhDetailCard" class="p-3.5 rounded-xl bg-slate-900/90 border border-amber-500/30 space-y-2.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SCREEN 4: XEM TUỔI HỢP (COMPATIBILITY)
+        =========================================== -->
+        <section id="screen-tuoihop" class="space-y-4 hidden animate-fade">
+          <div class="oriental-card rounded-2xl p-4 space-y-3.5">
+            <div>
+              <h2 class="font-serif-oriental text-lg font-bold gold-gradient-text">Xem Tuổi Tương Hợp Đa Chiều</h2>
+              <p class="text-xs text-slate-400">Đối chiếu Ngũ Hành Nạp Âm, Thiên Can, Địa Chi và Cung Phi Bát Trạch</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <!-- Person A -->
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+                <div class="text-xs font-bold text-amber-300">👤 Người thứ nhất (Bạn)</div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label for="compYearA" class="block text-[10px] text-slate-400">Năm sinh</label>
+                    <input id="compYearA" type="number" min="1930" max="2035" value="1997" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white" />
+                  </div>
+                  <div>
+                    <label for="compGenderA" class="block text-[10px] text-slate-400">Giới tính</label>
+                    <select id="compGenderA" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white">
+                      <option value="nam">Nam</option>
+                      <option value="nu">Nữ</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Person B -->
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+                <div class="text-xs font-bold text-amber-300">👤 Người thứ hai (Đối tác / Bạn đời)</div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label for="compYearB" class="block text-[10px] text-slate-400">Năm sinh</label>
+                    <input id="compYearB" type="number" min="1930" max="2035" value="1998" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white" />
+                  </div>
+                  <div>
+                    <label for="compGenderB" class="block text-[10px] text-slate-400">Giới tính</label>
+                    <select id="compGenderB" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white">
+                      <option value="nam">Nam</option>
+                      <option value="nu" selected>Nữ</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label for="compPurpose" class="block text-[11px] text-slate-300 mb-1">Mục đích tham khảo</label>
+              <select id="compPurpose" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+                <option value="honnhan">💍 Tình yêu & Hôn nhân</option>
+                <option value="laman">🤝 Hợp tác kinh doanh & Mở công ty</option>
+                <option value="xaynha">🏗️ Mượn tuổi / Tham khảo làm nhà & Khai trương</option>
+              </select>
+            </div>
+
+            <button type="button" id="btnCalcCompatibility" class="w-full gold-btn py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider">
+              ⚖️ Phân Tích Độ Tương Hợp Theo Quy Tắc Cổ Học
+            </button>
+
+            <div id="compatibilityResultBox" class="space-y-3 pt-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SCREEN 5: PHONG THỦY NHÀ Ở & TỬ VI HÔM NAY
+        =========================================== -->
+        <section id="screen-nhao" class="space-y-4 hidden animate-fade">
+          <!-- Sub-navigation between Nha O and Tu Vi / Ngay Tot -->
+          <div class="grid grid-cols-3 gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+            <button type="button" data-nhao-tab="battrach" class="nhao-tab-btn py-2 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+              🏠 Phong Thủy Nhà Ở
+            </button>
+            <button type="button" data-nhao-tab="tuvi" class="nhao-tab-btn py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white">
+              📜 Tử Vi & Tài Lộc
+            </button>
+            <button type="button" data-nhao-tab="ngaytot" class="nhao-tab-btn py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white">
+              📅 Xem Ngày Tốt
+            </button>
+          </div>
+
+          <!-- Subview A: Phong Thuy Nha O -->
+          <div id="subview-battrach" class="oriental-card rounded-2xl p-4 space-y-3">
+            <h2 class="font-serif-oriental text-lg font-bold gold-gradient-text">Tra Cứu Hướng Nhà & Không Gian Bát Trạch</h2>
+            <p class="text-xs text-slate-400">Dựa trên Cung Phi của hồ sơ đang lưu (<span id="nhaOProfileLabel" class="text-amber-300 font-semibold">1997 - Nam</span>)</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <label for="selectDoorDir" class="block text-[11px] text-slate-300 mb-1">Hướng cửa chính hiện tại (hoặc dự kiến)</label>
+                <select id="selectDoorDir" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-white">
+                  <option value="Bắc">Hướng Bắc (Khảm)</option>
+                  <option value="Nam" selected>Hướng Nam (Ly)</option>
+                  <option value="Đông">Hướng Đông (Chấn)</option>
+                  <option value="Đông Nam">Hướng Đông Nam (Tốn)</option>
+                  <option value="Tây">Hướng Tây (Đoài)</option>
+                  <option value="Tây Bắc">Hướng Tây Bắc (Càn)</option>
+                  <option value="Tây Nam">Hướng Tây Nam (Khôn)</option>
+                  <option value="Đông Bắc">Hướng Đông Bắc (Cấn)</option>
+                </select>
+              </div>
+              <div>
+                <label for="selectRoomType" class="block text-[11px] text-slate-300 mb-1">Không gian cần tư vấn</label>
+                <select id="selectRoomType" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-white">
+                  <option value="khach">Phòng khách & Cửa chính</option>
+                  <option value="bep">Phòng bếp (Tọa hung hướng cát)</option>
+                  <option value="ngu">Phòng ngủ & Giường ngủ</option>
+                  <option value="lamviec">Bàn làm việc & Phòng đọc sách</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="nhaOResultBox" class="space-y-3 pt-1">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Subview B: Tu Vi & Tai Loc -->
+          <div id="subview-tuvi" class="oriental-card rounded-2xl p-4 space-y-3 hidden">
+            <h2 class="font-serif-oriental text-lg font-bold gold-gradient-text">Vận Trình Tham Khảo & Định Hướng Sự Nghiệp</h2>
+            <p class="text-xs text-slate-400">Phân tích mối quan hệ giữa Hành Ngày hiện tại và Bản mệnh của bạn</p>
+            <div id="tuViContentBox" class="space-y-2.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Subview C: Xem Ngay Tot -->
+          <div id="subview-ngaytot" class="oriental-card rounded-2xl p-4 space-y-3 hidden">
+            <h2 class="font-serif-oriental text-lg font-bold gold-gradient-text">Tra Cứu Ngày Hoàng Đạo & Tương Hợp Tuổi</h2>
+            <div class="flex items-center gap-2">
+              <label for="inputCheckDate" class="text-xs text-slate-300">Chọn ngày dự kiến:</label>
+              <input id="inputCheckDate" type="date" value="2026-10-25" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white" />
+              <button type="button" id="btnCheckDate" class="gold-btn px-3 py-1.5 rounded-lg text-xs">Kiểm tra</button>
+            </div>
+            <div id="ngayTotContentBox" class="space-y-2.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SCREEN 6: TRỢ LÝ PHONG THỦY AI (RULE-GROUNDED CHAT)
+        =========================================== -->
+        <section id="screen-ai" class="space-y-3 hidden animate-fade">
+          <div class="oriental-card rounded-2xl p-3.5 space-y-3 flex flex-col h-[580px]">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl crimson-pill flex items-center justify-center text-base">🤖</span>
+                <div>
+                  <h2 class="font-serif-oriental text-base font-bold gold-gradient-text">Trợ Lý Phong Thủy AI (RAG + Rule Engine)</h2>
+                  <p class="text-[10px] text-slate-400">Quy trình 7 bước: Tách dữ liệu → Tính toán công thức → Diễn giải có trích nguồn</p>
+                </div>
+              </div>
+              <button type="button" id="btnClearChat" class="text-[11px] text-slate-400 hover:text-white px-2 py-1 rounded bg-slate-800">Xóa hội thoại</button>
+            </div>
+
+            <!-- Sample Quick Prompts -->
+            <div class="flex gap-1.5 overflow-x-auto custom-scrollbar pb-1">
+              <button type="button" data-ai-prompt="Tôi sinh năm 1997 thuộc mệnh gì theo các trường phái?" class="shrink-0 text-[11px] px-2.5 py-1 rounded-full bg-slate-900 hover:bg-amber-500/20 text-amber-200 border border-amber-500/30">
+                Sinh năm 1997 mệnh gì?
+              </button>
+              <button type="button" data-ai-prompt="Mệnh của tôi hợp màu nào để mua xe và chọn trang phục?" class="shrink-0 text-[11px] px-2.5 py-1 rounded-full bg-slate-900 hover:bg-amber-500/20 text-amber-200 border border-amber-500/30">
+                Mệnh tôi hợp màu xe nào?
+              </button>
+              <button type="button" data-ai-prompt="Ngũ hành tương sinh tương khắc được hiểu như thế nào?" class="shrink-0 text-[11px] px-2.5 py-1 rounded-full bg-slate-900 hover:bg-amber-500/20 text-amber-200 border border-amber-500/30">
+                Giải thích tương sinh tương khắc
+              </button>
+              <button type="button" data-ai-prompt="Phong thủy nhà ở cần lưu ý điều gì cho người sinh năm 1997?" class="shrink-0 text-[11px] px-2.5 py-1 rounded-full bg-slate-900 hover:bg-amber-500/20 text-amber-200 border border-amber-500/30">
+                Lưu ý phong thủy nhà ở
+              </button>
+            </div>
+
+            <!-- Chat Messages List -->
+            <div id="aiChatMessages" class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-1">
+              <!-- Populated by JS -->
+            </div>
+
+            <!-- Chat Input -->
+            <form id="formAiChat" class="pt-2 border-t border-slate-800 flex items-center gap-2">
+              <input id="inputAiQuestion" type="text" placeholder="Hỏi năm sinh (VD: 1995 mệnh gì, màu xe, hướng nhà...)" class="flex-1 bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white outline-none" />
+              <button type="submit" class="gold-btn px-3.5 py-2 rounded-xl text-xs font-bold shrink-0">Gửi</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SCREEN 7: QUẢN TRỊ QUẢNG CÁO & CÀI ĐẶT RIÊNG TƯ (ADMIN + PRIVACY)
+        =========================================== -->
+        <section id="screen-admin" class="space-y-4 hidden animate-fade">
+          <!-- Sub-tabs: Ad Admin vs History & Privacy -->
+          <div class="grid grid-cols-2 gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+            <button type="button" data-admin-tab="ads" class="admin-tab-btn py-2 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+              📊 Bảng Quản Trị Quảng Cáo
+            </button>
+            <button type="button" data-admin-tab="privacy" class="admin-tab-btn py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white">
+              🔒 Lịch Sử & Quyền Riêng Tư
+            </button>
+          </div>
+
+          <!-- Subview: Ad Manager (MỤC VI.1 - VI.4) -->
+          <div id="adminSubviewAds" class="space-y-4">
+            <div class="oriental-card rounded-2xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="font-serif-oriental text-base font-bold gold-gradient-text">Điều Khiển Tần Suất Quảng Cáo (Remote Config)</h2>
+                  <p class="text-[11px] text-slate-400">Thay đổi tức thời từ máy chủ mà không cần cập nhật lại ứng dụng trên App Store</p>
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Chống vi phạm AdMob</span>
+              </div>
+
+              <!-- Why not 30s auto-popup explanation -->
+              <div class="p-2.5 rounded-xl bg-red-950/40 border border-red-500/30 text-[11px] text-amber-100 leading-relaxed">
+                ⚠️ <strong>Bảo vệ tài khoản AdMob & App Store:</strong> Hệ thống đã chặn cơ chế tự bật quảng cáo toàn màn hình cưỡng bức mỗi 30 giây khi người dùng đang đọc/nhập liệu. Thay vào đó, quảng cáo Interstitial chỉ hiển thị <strong>tại điểm chuyển màn hình tự nhiên</strong> sau khi đã đủ thời gian nghỉ (Cooldown) và số thao tác tối thiểu.
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+                  <div class="flex justify-between text-xs">
+                    <span class="text-slate-300">Khoảng nghỉ tối thiểu (Cooldown):</span>
+                    <span id="lblCooldownVal" class="text-amber-300 font-bold">60 giây</span>
+                  </div>
+                  <input id="rangeAdCooldown" type="range" min="30" max="180" step="15" value="60" class="w-full accent-amber-400" />
+                  <div class="text-[10px] text-slate-400">Khuyến nghị sản phẩm thật: 90s – 180s để giữ chân người dùng.</div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+                  <div class="flex justify-between text-xs">
+                    <span class="text-slate-300">Số lần chuyển màn hình tối thiểu:</span>
+                    <span id="lblActionCapVal" class="text-amber-300 font-bold">3 lần</span>
+                  </div>
+                  <input id="rangeActionCap" type="range" min="2" max="8" step="1" value="3" class="w-full accent-amber-400" />
+                  <div class="text-[10px] text-slate-400">Chỉ kích hoạt khi người dùng hoàn tất thao tác chuyển trang.</div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                <label class="flex items-center gap-2 text-xs text-slate-200 cursor-pointer">
+                  <input id="chkBannerEnabled" type="checkbox" checked class="accent-amber-400 w-4 h-4 rounded" />
+                  Hiển thị Banner cố định cuối màn hình
+                </label>
+                <button type="button" id="btnTriggerTestInterstitial" class="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-semibold">
+                  ▶️ Kiểm tra Interstitial Ad Mẫu
+                </button>
+              </div>
+            </div>
+
+            <!-- Analytics Metrics -->
+            <div class="oriental-card rounded-2xl p-4 space-y-3">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-amber-300">Thống Kê Quảng Cáo Thời Gian Thực (Phiên Hiện Tại)</h3>
+              <div class="grid grid-cols-4 gap-2 text-center">
+                <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+                  <div class="text-[10px] text-slate-400">Banner Impr.</div>
+                  <div id="statBannerImpr" class="text-base font-bold text-white mt-0.5">1</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+                  <div class="text-[10px] text-slate-400">Interstitial</div>
+                  <div id="statInterImpr" class="text-base font-bold text-amber-300 mt-0.5">0</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+                  <div class="text-[10px] text-slate-400">Sponsor Clicks</div>
+                  <div id="statSponsorClicks" class="text-base font-bold text-emerald-400 mt-0.5">0</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+                  <div class="text-[10px] text-slate-400">Bị chặn (An toàn)</div>
+                  <div id="statBlockedAds" class="text-base font-bold text-rose-400 mt-0.5">0</div>
+                </div>
+              </div>
+              <p class="text-[10px] text-slate-400">
+                * Chế độ phát triển sử dụng <strong>Google AdMob Official Test Unit ID</strong> (<code>ca-app-pub-3940256099942544/6300978111</code>). Tuyệt đối không nhúng Secret Key vào Client.
+              </p>
+            </div>
+
+            <!-- Direct Sponsor Campaign Manager -->
+            <div class="oriental-card rounded-2xl p-4 space-y-3">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-amber-300">Quản Lý Chiến Dịch Đối Tác Trực Tiếp (Direct Ads)</h3>
+              <div id="campaignListBox" class="space-y-2">
+                <!-- Populated by JS -->
+              </div>
+
+              <form id="formAddCampaign" class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2.5">
+                <div class="text-xs font-semibold text-amber-200">+ Thêm chiến dịch tài trợ mới</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <input id="campName" type="text" required placeholder="Tên thương hiệu / Chiến dịch" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white" />
+                  <input id="campCategory" type="text" required placeholder="Ngành hàng (VD: Đá quý, Nội thất)" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white" />
+                </div>
+                <input id="campDesc" type="text" required placeholder="Nội dung quảng cáo ngắn gọn, minh bạch..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white" />
+                <button type="submit" class="gold-btn px-3 py-1.5 rounded-lg text-xs font-semibold">Kích hoạt chiến dịch lên Trang chủ</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Subview: History & Privacy (MỤC VIII) -->
+          <div id="adminSubviewPrivacy" class="space-y-4 hidden">
+            <div class="oriental-card rounded-2xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-300">Lịch Sử Tra Cứu Trên Thiết Bị</h3>
+                <button type="button" id="btnClearHistory" class="text-[11px] px-2.5 py-1 rounded bg-rose-950/80 text-rose-300 border border-rose-500/30 hover:bg-rose-900">
+                  🗑️ Xóa toàn bộ dữ liệu cá nhân
+                </button>
+              </div>
+              <div id="historyListBox" class="space-y-2">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+
+            <div class="oriental-card rounded-2xl p-4 space-y-2.5 text-xs text-slate-300 leading-relaxed">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-amber-300">Tuân Thủ Quyền Riêng Tư App Store & Google Play</h3>
+              <p>1. <strong>Tuyên bố miễn trừ trách nhiệm:</strong> Toàn bộ thông tin Ngũ hành, Bát trạch, Bát tự và Tử vi trong ứng dụng phục vụ mục đích nghiên cứu văn hóa và tham khảo tinh thần, không thay thế tư vấn tài chính, y tế hay pháp lý.</p>
+              <p>2. <strong>Quyền xóa dữ liệu (App Store Guideline 5.1.1):</strong> Người dùng sử dụng miễn phí không bắt buộc tạo tài khoản. Dữ liệu ngày sinh lưu cục bộ có thể xóa sạch bất cứ lúc nào bằng nút xóa phía trên.</p>
+              <p>3. <strong>Quản lý đồng ý quảng cáo (ATT / GDPR / Nghị định 13/2023/NĐ-CP):</strong> Khi phát hành chính thức, ứng dụng hiển thị hộp thoại xin phép theo dõi (App Tracking Transparency trên iOS) trước khi cá nhân hóa quảng cáo AdMob.</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- STICKY TEST BANNER AD SLOT (BOTTOM ABOVE NAV) -->
+      <div id="stickyBannerAd" class="bg-[#090D16] border-t border-amber-500/20 px-3 py-1.5 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 border border-amber-500/30 shrink-0">AdMob Test</span>
+          <span class="text-[11px] text-slate-300 truncate">Vị trí Banner 320x50 chuẩn • Không che nút bấm • Tách biệt nội dung</span>
+        </div>
+        <button type="button" data-nav="admin" class="text-[10px] text-amber-400 hover:underline shrink-0">Cấu hình</button>
+      </div>
+
+      <!-- BOTTOM NAVIGATION BAR (MOBILE-FIRST) -->
+      <nav class="bg-[#0B0F19] border-t border-slate-800 px-2 py-1.5 grid grid-cols-6 gap-1">
+        <button type="button" data-nav="home" class="nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-amber-400 bg-amber-500/10">
+          <span class="text-base leading-none">🏮</span>
+          <span class="text-[10px] font-medium mt-1">Trang chủ</span>
+        </button>
+        <button type="button" data-nav="banmenh" class="nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-400 hover:text-slate-200">
+          <span class="text-base leading-none">🧭</span>
+          <span class="text-[10px] font-medium mt-1">Bản mệnh</span>
+        </button>
+        <button type="button" data-nav="nguhanh" class="nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-400 hover:text-slate-200">
+          <span class="text-base leading-none">☯️</span>
+          <span class="text-[10px] font-medium mt-1">Ngũ hành</span>
+        </button>
+        <button type="button" data-nav="tuoihop" class="nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-400 hover:text-slate-200">
+          <span class="text-base leading-none">🤝</span>
+          <span class="text-[10px] font-medium mt-1">Tuổi hợp</span>
+        </button>
+        <button type="button" data-nav="ai" class="nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-400 hover:text-slate-200">
+          <span class="text-base leading-none">🤖</span>
+          <span class="text-[10px] font-medium mt-1">Trợ lý AI</span>
+        </button>
+        <button type="button" data-nav="admin" class="nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-400 hover:text-slate-200">
+          <span class="text-base leading-none">⚙️</span>
+          <span class="text-[10px] font-medium mt-1">Quản trị</span>
+        </button>
+      </nav>
+    </div>
+  </main>
+
+  <!-- INTERSTITIAL AD MODAL (COMPLIANT TRANSITION AD) -->
+  <div id="interstitialModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="w-full max-w-sm oriental-card rounded-2xl p-5 border-2 border-amber-400/50 space-y-4 text-center animate-fade">
+      <div class="flex items-center justify-between text-[11px] text-slate-400">
+        <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">Quảng cáo chuyển trang (Test Mode)</span>
+        <span id="interstitialCountdown">Có thể đóng ngay</span>
+      </div>
+      <div class="py-4 px-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
+        <div class="text-3xl">🏺</div>
+        <h3 class="font-serif-oriental text-base font-bold text-white">Không Gian Nội Thất Á Đông — Gỗ & Đá Tự Nhiên</h3>
+        <p class="text-xs text-slate-300">Thiết kế phòng khách, phòng thờ và bàn làm việc hài hòa ánh sáng, thông gió theo nguyên lý Bát Trạch.</p>
+        <div class="text-[10px] text-amber-300/80 pt-1">Unit ID: ca-app-pub-3940256099942544/1033173712</div>
+      </div>
+      <div class="text-[11px] text-slate-400">
+        Xuất hiện đúng điểm chuyển tiếp màn hình sau khi thỏa điều kiện Cooldown (<span id="modalCooldownInfo">60s</span>).
+      </div>
+      <div class="flex gap-2">
+        <button type="button" id="btnCloseInterstitial" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white">
+          Đóng quảng cáo (✕)
+        </button>
+        <button type="button" id="btnClickInterstitial" class="flex-1 py-2 rounded-xl gold-btn text-xs font-semibold">
+          Xem chi tiết
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastBox" class="fixed bottom-16 left-1/2 -translate-x-1/2 z-50 hidden px-4 py-2 rounded-xl bg-amber-400 text-slate-950 text-xs font-semibold shadow-xl">
+    Đã cập nhật!
+  </div>
+
+  <!-- =====================================================
+       CORE FENG SHUI ENGINE & APPLICATION LOGIC
+  ====================================================== -->
+  <script>
+    (function() {
+      // 1. DỮ LIỆU THIÊN CAN & ĐỊA CHI CHUẨN XÁC
+      const THIEN_CAN = [
+        { name: 'Giáp', element: 'Mộc', polarity: 'Dương', val: 1 },
+        { name: 'Ất', element: 'Mộc', polarity: 'Âm', val: 1 },
+        { name: 'Bính', element: 'Hỏa', polarity: 'Dương', val: 2 },
+        { name: 'Đinh', element: 'Hỏa', polarity: 'Âm', val: 2 },
+        { name: 'Mậu', element: 'Thổ', polarity: 'Dương', val: 3 },
+        { name: 'Kỷ', element: 'Thổ', polarity: 'Âm', val: 3 },
+        { name: 'Canh', element: 'Kim', polarity: 'Dương', val: 4 },
+        { name: 'Tân', element: 'Kim', polarity: 'Âm', val: 4 },
+        { name: 'Nhâm', element: 'Thủy', polarity: 'Dương', val: 5 },
+        { name: 'Quý', element: 'Thủy', polarity: 'Âm', val: 5 }
+      ];
+
+      const DIA_CHI = [
+        { name: 'Tý', animal: 'Chuột', element: 'Thủy', zVal: 0 },
+        { name: 'Sửu', animal: 'Trâu', element: 'Thổ', zVal: 0 },
+        { name: 'Dần', animal: 'Hổ', element: 'Mộc', zVal: 1 },
+        { name: 'Mão', animal: 'Mèo', element: 'Mộc', zVal: 1 },
+        { name: 'Thìn', animal: 'Rồng', element: 'Thổ', zVal: 2 },
+        { name: 'Tỵ', animal: 'Rắn', element: 'Hỏa', zVal: 2 },
+        { name: 'Ngọ', animal: 'Ngựa', element: 'Hỏa', zVal: 0 },
+        { name: 'Mùi', animal: 'Dê', element: 'Thổ', zVal: 0 },
+        { name: 'Thân', animal: 'Khỉ', element: 'Kim', zVal: 1 },
+        { name: 'Dậu', animal: 'Gà', element: 'Kim', zVal: 1 },
+        { name: 'Tuất', animal: 'Chó', element: 'Thổ', zVal: 2 },
+        { name: 'Hợi', animal: 'Hợi', element: 'Thủy', zVal: 2 }
+      ];
+
+      // 30 NẠP ÂM LỤC THẬP HOA GIÁP CHUẨN CỔ HỌC
+      const NAP_AM_30 = [
+        { pair: 'Giáp Tý - Ất Sửu', name: 'Hải Trung Kim', meaning: 'Vàng trong biển', element: 'Kim' },
+        { pair: 'Bính Dần - Đinh Mão', name: 'Lư Trung Hỏa', meaning: 'Lửa trong lò', element: 'Hỏa' },
+        { pair: 'Mậu Thìn - Kỷ Tỵ', name: 'Đại Lâm Mộc', meaning: 'Gỗ rừng già', element: 'Mộc' },
+        { pair: 'Canh Ngọ - Tân Mùi', name: 'Lộ Bàng Thổ', meaning: 'Đất ven đường', element: 'Thổ' },
+        { pair: 'Nhâm Thân - Quý Dậu', name: 'Kiếm Phong Kim', meaning: 'Vàng mũi kiếm', element: 'Kim' },
+        { pair: 'Giáp Tuất - Ất Hợi', name: 'Sơn Đầu Hỏa', meaning: 'Lửa trên núi', element: 'Hỏa' },
+        { pair: 'Bính Tý - Đinh Sửu', name: 'Giản Hạ Thủy', meaning: 'Nước dưới khe', element: 'Thủy' },
+        { pair: 'Mậu Dần - Kỷ Mão', name: 'Thành Đầu Thổ', meaning: 'Đất tường thành', element: 'Thổ' },
+        { pair: 'Canh Thìn - Tân Tỵ', name: 'Bạch Lạp Kim', meaning: 'Vàng chân đèn', element: 'Kim' },
+        { pair: 'Nhâm Ngọ - Quý Mùi', name: 'Dương Liễu Mộc', meaning: 'Gỗ cây dương liễu', element: 'Mộc' },
+        { pair: 'Giáp Thân - Ất Dậu', name: 'Tuyền Trung Thủy', meaning: 'Nước trong suối', element: 'Thủy' },
+        { pair: 'Bính Tuất - Đinh Hợi', name: 'Ốc Thượng Thổ', meaning: 'Đất mái nhà', element: 'Thổ' },
+        { pair: 'Mậu Tý - Kỷ Sửu', name: 'Tích Lịch Hỏa', meaning: 'Lửa sấm sét', element: 'Hỏa' },
+        { pair: 'Canh Dần - Tân Mão', name: 'Tùng Bách Mộc', meaning: 'Gỗ tùng bách', element: 'Mộc' },
+        { pair: 'Nhâm Thìn - Quý Tỵ', name: 'Trường Lưu Thủy', meaning: 'Nước chảy dài', element: 'Thủy' },
+        { pair: 'Giáp Ngọ - Ất Mùi', name: 'Sa Trung Kim', meaning: 'Vàng trong cát', element: 'Kim' },
+        { pair: 'Bính Thân - Đinh Dậu', name: 'Sơn Hạ Hỏa', meaning: 'Lửa dưới chân núi', element: 'Hỏa' },
+        { pair: 'Mậu Tuất - Kỷ Hợi', name: 'Bình Địa Mộc', meaning: 'Gỗ đồng bằng', element: 'Mộc' },
+        { pair: 'Canh Tý - Tân Sửu', name: 'Bích Thượng Thổ', meaning: 'Đất trên vách', element: 'Thổ' },
+        { pair: 'Nhâm Dần - Quý Mão', name: 'Kim Bạch Kim', meaning: 'Vàng pha bạc', element: 'Kim' },
+        { pair: 'Giáp Thìn - Ất Tỵ', name: 'Phú Đăng Hỏa', meaning: 'Lửa đèn chụp', element: 'Hỏa' },
+        { pair: 'Bính Ngọ - Đinh Mùi', name: 'Thiên Hà Thủy', meaning: 'Nước trên trời', element: 'Thủy' },
+        { pair: 'Mậu Thân - Kỷ Dậu', name: 'Đại Trạch Thổ', meaning: 'Đất nền lớn', element: 'Thổ' },
+        { pair: 'Canh Tuất - Tân Hợi', name: 'Thoa Xuyến Kim', meaning: 'Vàng trang sức', element: 'Kim' },
+        { pair: 'Nhâm Tý - Quý Sửu', name: 'Tang Đố Mộc', meaning: 'Gỗ cây dâu', element: 'Mộc' },
+        { pair: 'Giáp Dần - Ất Mão', name: 'Đại Khê Thủy', meaning: 'Nước khe lớn', element: 'Thủy' },
+        { pair: 'Bính Thìn - Đinh Tỵ', name: 'Sa Trung Thổ', meaning: 'Đất pha cát', element: 'Thổ' },
+        { pair: 'Mậu Ngọ - Kỷ Mùi', name: 'Thiên Thượng Hỏa', meaning: 'Lửa trên trời', element: 'Hỏa' },
+        { pair: 'Canh Thân - Tân Dậu', name: 'Thạch Lựu Mộc', meaning: 'Gỗ cây lựu đá', element: 'Mộc' },
+        { pair: 'Nhâm Tuất - Quý Hợi', name: 'Đại Hải Thủy', meaning: 'Nước biển lớn', element: 'Thủy' }
+      ];
+
+      // CƠ SỞ DỮ LIỆU NGŨ HÀNH CHI TIẾT
+      const NGU_HANH_DB = {
+        'Kim': {
+          sinh: 'Thủy',
+          duocSinh: 'Thổ',
+          khac: 'Mộc',
+          biKhac: 'Hỏa',
+          colorsBanMenh: ['Trắng', 'Xám bạc', 'Ánh kim'],
+          colorsTuongSinh: ['Vàng đất', 'Nâu trầm', 'Be kem'],
+          colorsCanNhac: ['Đỏ rực', 'Cam đậm', 'Hồng tím'],
+          nature: 'Đại diện cho kim khí, sự sắc bén, tính kỷ luật, cấu trúc rõ ràng và khả năng quyết đoán.',
+          career: 'Kỹ thuật, cơ khí, tài chính - ngân hàng, quản trị hệ thống, công nghệ phần cứng, kim hoàn.',
+          sinhExplain: 'Kim sinh Thủy (Kim loại nung chảy tạo thành dạng lỏng; khoáng chất làm nguồn nước trong lành). Thổ sinh Kim (Trong lòng đất sinh ra quặng kim loại).',
+          khacExplain: 'Kim khắc Mộc (Rìu kim loại chặt cây). Hỏa khắc Kim (Lửa nhiệt độ cao làm nóng chảy kim loại).'
+        },
+        'Mộc': {
+          sinh: 'Hỏa',
+          duocSinh: 'Thủy',
+          khac: 'Thổ',
+          biKhac: 'Kim',
+          colorsBanMenh: ['Xanh lá cây', 'Xanh ngọc bích', 'Xanh rêu'],
+          colorsTuongSinh: ['Xanh nước biển', 'Xanh đen', 'Đen'],
+          colorsCanNhac: ['Trắng ánh kim', 'Bạc', 'Xám kim loại'],
+          nature: 'Đại diện cho cây cối mùa xuân, sức sống vươn lên, lòng nhân ái, sự sáng tạo và mở rộng.',
+          career: 'Giáo dục, y dược, nông - lâm nghiệp, thiết kế sáng tạo, xuất bản, môi trường, nội thất gỗ.',
+          sinhExplain: 'Mộc sinh Hỏa (Gỗ khô làm nhiên liệu cho lửa cháy sáng). Thủy sinh Mộc (Nước tưới tiêu nuôi dưỡng cây cối sinh trưởng).',
+          khacExplain: 'Mộc khắc Thổ (Rễ cây bám sâu hút dưỡng chất và giữ đất). Kim khắc Mộc (Kim khí cắt tỉa cây cối).'
+        },
+        'Thủy': {
+          sinh: 'Mộc',
+          duocSinh: 'Kim',
+          khac: 'Hỏa',
+          biKhac: 'Thổ',
+          colorsBanMenh: ['Xanh dương đậm', 'Xanh đen', 'Đen'],
+          colorsTuongSinh: ['Trắng', 'Bạc', 'Xám ánh kim'],
+          colorsCanNhac: ['Vàng sậm', 'Nâu đất', 'Đỏ cam'],
+          nature: 'Đại diện cho dòng nước uyển chuyển, trí tuệ linh hoạt, khả năng giao tiếp, thích nghi và chiều sâu nội tâm.',
+          career: 'Thương mại, logistics, ngoại giao, truyền thông, du lịch, hàng hải, nghiên cứu dữ liệu và tư vấn.',
+          sinhExplain: 'Thủy sinh Mộc (Nước nuôi cây đâm chồi). Kim sinh Thủy (Kim khí tụ thủy, hỗ trợ nguồn nước).',
+          khacExplain: 'Thủy khắc Hỏa (Nước dập tắt ngọn lửa đang bùng cháy). Thổ khắc Thủy (Đê đất ngăn dòng nước lũ).'
+        },
+        'Hỏa': {
+          sinh: 'Thổ',
+          duocSinh: 'Mộc',
+          khac: 'Kim',
+          biKhac: 'Thủy',
+          colorsBanMenh: ['Đỏ trầm', 'Hồng', 'Tím', 'Cam ấm'],
+          colorsTuongSinh: ['Xanh lá cây', 'Xanh lục', 'Xanh rêu'],
+          colorsCanNhac: ['Đen', 'Xanh nước biển sẫm'],
+          nature: 'Đại diện cho ngọn lửa mùa hạ, sự nhiệt huyết, lễ nghĩa, tinh thần tiên phong và sức lan tỏa mạnh mẽ.',
+          career: 'Công nghệ thông tin, năng lượng, truyền thông - sự kiện, ẩm thực, nghệ thuật biểu diễn, marketing.',
+          sinhExplain: 'Hỏa sinh Thổ (Lửa đốt cháy vạn vật hóa thành tro bụi bồi đắp cho đất). Mộc sinh Hỏa (Cây củi tiếp sức cho lửa).',
+          khacExplain: 'Hỏa khắc Kim (Lửa nung chảy kim loại để rèn đúc). Thủy khắc Hỏa (Nước làm dịu sức nóng của lửa).'
+        },
+        'Thổ': {
+          sinh: 'Kim',
+          duocSinh: 'Hỏa',
+          khac: 'Thủy',
+          biKhac: 'Mộc',
+          colorsBanMenh: ['Vàng kim trầm', 'Nâu đất', 'Be cát'],
+          colorsTuongSinh: ['Đỏ trầm', 'Hồng đất', 'Cam ấm', 'Tím'],
+          colorsCanNhac: ['Xanh lá cây đậm', 'Xanh lục'],
+          nature: 'Đại diện cho đất đai nuôi dưỡng, sự bền bỉ, chữ Tín, tính ổn định, bao dung và nền tảng vững chắc.',
+          career: 'Bất động sản, xây dựng, kiến trúc, quản lý chuỗi cung ứng, nông nghiệp công nghệ cao, hành chính.',
+          sinhExplain: 'Thổ sinh Kim (Đất đá kết tinh thành kim loại quý). Hỏa sinh Thổ (Tro tàn của lửa làm màu mỡ đất đai).',
+          khacExplain: 'Thổ khắc Thủy (Đất đắp đê định hình dòng chảy của nước). Mộc khắc Thổ (Cây cối xuyên rễ qua tầng đất).'
+        }
+      };
+
+      // CUNG PHI BÁT TRẠCH DATABASE
+      const CUNG_PHI_DB = {
+        1: { name: 'Khảm', element: 'Thủy', group: 'Đông Tứ Trạch', goodDirs: ['Đông Nam (Sinh Khí)', 'Đông (Thiên Y)', 'Nam (Diên Niên)', 'Bắc (Phục Vị)'], badDirs: ['Tây Nam (Tuyệt Mệnh)', 'Đông Bắc (Ngũ Quỷ)', 'Tây Bắc (Lục Sát)', 'Tây (Họa Hại)'] },
+        2: { name: 'Khôn', element: 'Thổ', group: 'Tây Tứ Trạch', goodDirs: ['Đông Bắc (Sinh Khí)', 'Tây (Thiên Y)', 'Tây Bắc (Diên Niên)', 'Tây Nam (Phục Vị)'], badDirs: ['Bắc (Tuyệt Mệnh)', 'Đông Nam (Ngũ Quỷ)', 'Nam (Lục Sát)', 'Đông (Họa Hại)'] },
+        3: { name: 'Chấn', element: 'Mộc', group: 'Đông Tứ Trạch', goodDirs: ['Nam (Sinh Khí)', 'Bắc (Thiên Y)', 'Đông Nam (Diên Niên)', 'Đông (Phục Vị)'], badDirs: ['Tây (Tuyệt Mệnh)', 'Tây Bắc (Ngũ Quỷ)', 'Đông Bắc (Lục Sát)', 'Tây Nam (Họa Hại)'] },
+        4: { name: 'Tốn', element: 'Mộc', group: 'Đông Tứ Trạch', goodDirs: ['Bắc (Sinh Khí)', 'Nam (Thiên Y)', 'Đông (Diên Niên)', 'Đông Nam (Phục Vị)'], badDirs: ['Đông Bắc (Tuyệt Mệnh)', 'Tây Nam (Ngũ Quỷ)', 'Tây (Lục Sát)', 'Tây Bắc (Họa Hại)'] },
+        6: { name: 'Càn', element: 'Kim', group: 'Tây Tứ Trạch', goodDirs: ['Tây (Sinh Khí)', 'Đông Bắc (Thiên Y)', 'Tây Nam (Diên Niên)', 'Tây Bắc (Phục Vị)'], badDirs: ['Nam (Tuyệt Mệnh)', 'Đông (Ngũ Quỷ)', 'Bắc (Lục Sát)', 'Đông Nam (Họa Hại)'] },
+        7: { name: 'Đoài', element: 'Kim', group: 'Tây Tứ Trạch', goodDirs: ['Tây Bắc (Sinh Khí)', 'Tây Nam (Thiên Y)', 'Đông Bắc (Diên Niên)', 'Tây (Phục Vị)'], badDirs: ['Đông (Tuyệt Mệnh)', 'Nam (Ngũ Quỷ)', 'Đông Nam (Lục Sát)', 'Bắc (Họa Hại)'] },
+        8: { name: 'Cấn', element: 'Thổ', group: 'Tây Tứ Trạch', goodDirs: ['Tây Nam (Sinh Khí)', 'Tây Bắc (Thiên Y)', 'Tây (Diên Niên)', 'Đông Bắc (Phục Vị)'], badDirs: ['Đông Nam (Tuyệt Mệnh)', 'Bắc (Ngũ Quỷ)', 'Đông (Lục Sát)', 'Nam (Họa Hại)'] },
+        9: { name: 'Ly', element: 'Hỏa', group: 'Đông Tứ Trạch', goodDirs: ['Đông (Sinh Khí)', 'Đông Nam (Thiên Y)', 'Bắc (Diên Niên)', 'Nam (Phục Vị)'], badDirs: ['Tây Bắc (Tuyệt Mệnh)', 'Tây (Ngũ Quỷ)', 'Tây Nam (Lục Sát)', 'Đông Bắc (Họa Hại)'] }
+      };
+
+      // STATE ỨNG DỤNG
+      const appState = {
+        currentScreen: 'home',
+        currentSchoolTab: 'napam',
+        selectedElement: 'Thủy',
+        profile: {
+          day: 15,
+          month: 8,
+          year: 1997,
+          gender: 'nam',
+          calendar: 'duong',
+          hour: 'thin'
+        },
+        adConfig: {
+          cooldownSec: 60,
+          actionCap: 3,
+          bannerEnabled: true,
+          lastAdTimestamp: Date.now() - 45000,
+          navActionCount: 0,
+          stats: {
+            bannerImpr: 1,
+            interImpr: 0,
+            sponsorClicks: 0,
+            blockedAds: 0
+          }
+        },
+        campaigns: [
+          {
+            id: 'c1',
+            name: 'Trầm Hương & Đá Quý Minh Tâm Việt Nam',
+            category: 'Đá quý & Vật phẩm',
+            desc: 'Bộ sưu tập vòng đá tự nhiên chế tác theo màu sắc Ngũ Hành tương ứng từng bản mệnh. Kiểm định chất lượng rõ ràng.',
+            active: true,
+            clicks: 0
+          },
+          {
+            id: 'c2',
+            name: 'Kiến Trúc Nội Thất Á Đông — An Gia',
+            category: 'Nội thất & Xây dựng',
+            desc: 'Tư vấn bố trí không gian phòng khách, phòng bếp chuẩn hướng Bát Trạch và tối ưu ánh sáng tự nhiên.',
+            active: false,
+            clicks: 0
+          }
+        ],
+        history: [
+          { year: 1997, gender: 'nam', canChi: 'Đinh Sửu', napAm: 'Giản Hạ Thủy (Thủy)', cungPhi: 'Chấn (Mộc)', time: 'Hồ sơ mặc định' }
+        ]
+      };
+
+      // Load saved state safely
+      try {
+        const saved = localStorage.getItem('phongthuy_ai_mvp_v1');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.profile) appState.profile = parsed.profile;
+          if (parsed.history && Array.isArray(parsed.history)) appState.history = parsed.history;
+        }
+      } catch (e) {
+        // Ignore storage restrictions in sandbox
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem('phongthuy_ai_mvp_v1', JSON.stringify({
+            profile: appState.profile,
+            history: appState.history
+          }));
+        } catch (e) {}
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById('toastBox');
+        if (!toast) return;
+        toast.textContent = msg;
+        toast.classList.remove('hidden');
+        setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 2400);
+      }
+
+      // =====================================================
+      // THUẬT TOÁN PHONG THỦY KIỂM CHỨNG ĐƯỢC (DETERMINISTIC)
+      // =====================================================
+
+      // 1. Tính Can Chi & Nạp Âm theo Năm sinh
+      function calculateNapAm(year) {
+        const y = parseInt(year, 10) || 1997;
+        const canIdx = ((y - 4) % 10 + 10) % 10;
+        const chiIdx = ((y - 4) % 12 + 12) % 12;
+        const sexagenaryIdx = ((y - 4) % 60 + 60) % 60;
+        const napAmObj = NAP_AM_30[Math.floor(sexagenaryIdx / 2)];
+        const can = THIEN_CAN[canIdx];
+        const chi = DIA_CHI[chiIdx];
+        return {
+          year: y,
+          can,
+          chi,
+          canChiName: can.name + ' ' + chi.name,
+          napAmName: napAmObj.name,
+          napAmMeaning: napAmObj.meaning,
+          element: napAmObj.element,
+          pairText: napAmObj.pair
+        };
+      }
+
+      // 2. Tính Cung Phi Bát Trạch theo Năm sinh + Giới tính
+      function calculateCungPhi(year, gender) {
+        const y = parseInt(year, 10) || 1997;
+        const rem = y % 9;
+        let kua;
+        if (gender === 'nam') {
+          kua = (11 - rem) % 9;
+          if (kua === 0) kua = 9;
+          if (kua === 5) kua = 2; // Nam 5 quy Khôn (2)
+        } else {
+          kua = (rem + 4) % 9;
+          if (kua === 0) kua = 9;
+          if (kua === 5) kua = 8; // Nữ 5 quy Cấn (8)
+        }
+        return CUNG_PHI_DB[kua] || CUNG_PHI_DB[3];
+      }
+
+      // 3. Tính Nhật Chủ Bát Tự (Can Chi của Ngày sinh theo Julian Day Number)
+      function calculateBatTu(day, month, year, hourCode) {
+        const d = parseInt(day, 10) || 15;
+        const m = parseInt(month, 10) || 8;
+        const y = parseInt(year, 10) || 1997;
+        const a = Math.floor((14 - m) / 12);
+        const yAdj = y + 4800 - a;
+        const mAdj = m + 12 * a - 3;
+        const jdn = d + Math.floor((153 * mAdj + 2) / 5) + 365 * yAdj + Math.floor(yAdj / 4) - Math.floor(yAdj / 100) + Math.floor(yAdj / 400) - 32045;
+        const dayCanIdx = ((jdn + 9) % 10 + 10) % 10;
+        const dayChiIdx = ((jdn + 1) % 12 + 12) % 12;
+        const dayCan = THIEN_CAN[dayCanIdx];
+        const dayChi = DIA_CHI[dayChiIdx];
+
+        const hourNames = {
+          ty: 'Tý', suu: 'Sửu', dan: 'Dần', mao: 'Mão', thin: 'Thìn', ti: 'Tỵ',
+          ngo: 'Ngọ', mui: 'Mùi', than: 'Thân', dau: 'Dậu', tuat: 'Tuất', hoi: 'Hợi'
+        };
+
+        return {
+          nhatChuCan: dayCan.name,
+          nhatChuElement: dayCan.element,
+          nhatChuPolarity: dayCan.polarity,
+          dayCanChi: dayCan.name + ' ' + dayChi.name,
+          hourLabel: hourNames[hourCode] || 'Thìn'
+        };
+      }
+
+      // Tổng hợp đầy đủ Hồ sơ Phong thủy
+      function getFullProfileAnalysis(profile) {
+        const napAm = calculateNapAm(profile.year);
+        const cungPhi = calculateCungPhi(profile.year, profile.gender);
+        const batTu = calculateBatTu(profile.day, profile.month, profile.year, profile.hour);
+        return { napAm, cungPhi, batTu };
+      }
+
+      // =====================================================
+      // RENDER TRANG CHỦ & BẢN MỆNH
+      // =====================================================
+      function updateHomeHeaderSummary() {
+        const analysis = getFullProfileAnalysis(appState.profile);
+        const savedTxt = document.getElementById('homeSavedProfileText');
+        if (savedTxt) {
+          savedTxt.textContent = `${appState.profile.year} • ${analysis.napAm.canChiName} (${analysis.napAm.napAmName} - ${analysis.napAm.element})`;
+        }
+        const activeCamp = appState.campaigns.find(c => c.active) || appState.campaigns[0];
+        if (activeCamp) {
+          document.getElementById('sponsorTitle').textContent = activeCamp.name;
+          document.getElementById('sponsorDesc').textContent = activeCamp.desc;
+        }
+      }
+
+      function renderBanMenhScreen() {
+        const p = appState.profile;
+        const { napAm, cungPhi, batTu } = getFullProfileAnalysis(p);
+        const badge = document.getElementById('bmSummaryBadge');
+        if (badge) {
+          badge.textContent = `${napAm.canChiName} (${p.year}) • ${p.gender === 'nam' ? 'Nam' : 'Nữ'}`;
+        }
+
+        // Update school tab styles
+        document.querySelectorAll('.school-tab-btn').forEach(btn => {
+          const tab = btn.getAttribute('data-school-tab');
+          if (tab === appState.currentSchoolTab) {
+            btn.className = 'school-tab-btn py-1.5 px-2 rounded-lg text-[11px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+          } else {
+            btn.className = 'school-tab-btn py-1.5 px-2 rounded-lg text-[11px] font-semibold text-slate-400 hover:text-white';
+          }
+        });
+
+        const container = document.getElementById('banMenhResultContent');
+        if (!container) return;
+
+        if (appState.currentSchoolTab === 'napam') {
+          const elInfo = NGU_HANH_DB[napAm.element];
+          container.innerHTML = `
+            <div class="p-3.5 rounded-xl bg-slate-900/90 border border-amber-500/30 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] uppercase tracking-wider text-amber-300 font-semibold">Phương pháp 1: Ngũ Hành Nạp Âm (Lục Thập Hoa Giáp)</span>
+                  <h4 class="text-base font-bold text-white mt-0.5">${napAm.napAmName} — ${napAm.napAmMeaning}</h4>
+                </div>
+                <span class="px-2.5 py-1 rounded-lg crimson-pill text-amber-300 text-xs font-bold">Mệnh ${napAm.element}</span>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-1">
+                <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+                  <div class="text-[10px] text-slate-400">Năm Can Chi</div>
+                  <div class="font-semibold text-white">${napAm.canChiName}</div>
+                </div>
+                <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+                  <div class="text-[10px] text-slate-400">Thiên Can</div>
+                  <div class="font-semibold text-white">${napAm.can.name} (${napAm.can.element})</div>
+                </div>
+                <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+                  <div class="text-[10px] text-slate-400">Địa Chi</div>
+                  <div class="font-semibold text-white">${napAm.chi.name} (${napAm.chi.element})</div>
+                </div>
+                <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+                  <div class="text-[10px] text-slate-400">Tương Sinh</div>
+                  <div class="font-semibold text-emerald-400">${elInfo.duocSinh} → ${napAm.element} → ${elInfo.sinh}</div>
+                </div>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                <strong>Đặc điểm truyền thống:</strong> ${elInfo.nature}
+              </p>
+              <div class="text-[11px] text-amber-200/90 bg-amber-950/30 p-2 rounded-lg border border-amber-500/20">
+                📌 <strong>Phạm vi áp dụng:</strong> Nạp Âm dùng phổ biến khi tra cứu tính cách tổng quan theo năm sinh và đối chiếu nạp âm hai tuổi. Cả Nam và Nữ sinh năm ${p.year} đều có chung Nạp Âm là <strong>${napAm.napAmName}</strong>.
+              </div>
+            </div>
+          `;
+        } else if (appState.currentSchoolTab === 'cungphi') {
+          const elInfo = NGU_HANH_DB[cungPhi.element];
+          container.innerHTML = `
+            <div class="p-3.5 rounded-xl bg-slate-900/90 border border-amber-500/30 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] uppercase tracking-wider text-amber-300 font-semibold">Phương pháp 2: Cung Phi Bát Trạch (Phụ thuộc Giới tính)</span>
+                  <h4 class="text-base font-bold text-white mt-0.5">Cung ${cungPhi.name} (${cungPhi.group})</h4>
+                </div>
+                <span class="px-2.5 py-1 rounded-lg crimson-pill text-amber-300 text-xs font-bold">Hành ${cungPhi.element}</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div class="p-2.5 rounded-lg bg-emerald-950/30 border border-emerald-500/30">
+                  <div class="font-semibold text-emerald-300 mb-1">✅ 4 Hướng Tốt (Tứ Cát)</div>
+                  <div class="text-slate-200 text-[11px] space-y-0.5">${cungPhi.goodDirs.map(d => `<div>• ${d}</div>`).join('')}</div>
+                </div>
+                <div class="p-2.5 rounded-lg bg-rose-950/30 border border-rose-500/30">
+                  <div class="font-semibold text-rose-300 mb-1">⚠️ 4 Hướng Cần Hóa Giải</div>
+                  <div class="text-slate-200 text-[11px] space-y-0.5">${cungPhi.badDirs.map(d => `<div>• ${d}</div>`).join('')}</div>
+                </div>
+              </div>
+              <div class="text-[11px] text-amber-200/90 bg-amber-950/30 p-2 rounded-lg border border-amber-500/20">
+                📌 <strong>Vì sao khác Nạp Âm?</strong> Sinh năm ${p.year} có Nạp Âm là <strong>${napAm.element}</strong>, nhưng xét theo giới tính <strong>${p.gender === 'nam' ? 'Nam' : 'Nữ'}</strong> thì Cung Phi thuộc <strong>Cung ${cungPhi.name} (Hành ${cungPhi.element})</strong>. Khi xem hướng nhà, hướng bếp hoặc chọn màu nội thất theo Bát Trạch, chuyên gia phong thủy sử dụng Cung Phi này.
+              </div>
+            </div>
+          `;
+        } else {
+          const elInfo = NGU_HANH_DB[batTu.nhatChuElement];
+          container.innerHTML = `
+            <div class="p-3.5 rounded-xl bg-slate-900/90 border border-amber-500/30 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] uppercase tracking-wider text-amber-300 font-semibold">Phương pháp 3: Tử Bình Bát Tự (Nhật Chủ / Can Ngày)</span>
+                  <h4 class="text-base font-bold text-white mt-0.5">Nhật Chủ: ${batTu.nhatChuCan} (${batTu.nhatChuPolarity} ${batTu.nhatChuElement})</h4>
+                </div>
+                <span class="px-2.5 py-1 rounded-lg crimson-pill text-amber-300 text-xs font-bold">Nhật Chủ ${batTu.nhatChuElement}</span>
+              </div>
+              <div class="grid grid-cols-4 gap-1.5 text-center text-xs">
+                <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+                  <div class="text-[10px] text-slate-400">Trụ Năm</div>
+                  <div class="font-semibold text-white">${napAm.canChiName}</div>
+                </div>
+                <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+                  <div class="text-[10px] text-slate-400">Trụ Tháng</div>
+                  <div class="font-semibold text-white">Tháng ${p.month}</div>
+                </div>
+                <div class="p-2 rounded-lg bg-amber-500/15 border border-amber-500/40">
+                  <div class="text-[10px] text-amber-300">Trụ Ngày (Nhật chủ)</div>
+                  <div class="font-bold text-amber-200">${batTu.dayCanChi}</div>
+                </div>
+                <div class="p-2 rounded-lg bg-slate-950 border border-slate-800">
+                  <div class="text-[10px] text-slate-400">Trụ Giờ</div>
+                  <div class="font-semibold text-white">Giờ ${batTu.hourLabel}</div>
+                </div>
+              </div>
+              <div class="text-[11px] text-amber-200/90 bg-amber-950/30 p-2 rounded-lg border border-amber-500/20">
+                📌 <strong>Nguyên lý Bát Tự:</strong> Thay vì chỉ nhìn vào Năm sinh, Bát Tự lấy Thiên Can của Ngày sinh (<strong>${batTu.nhatChuCan} - ${batTu.nhatChuElement}</strong>) làm bản thân, sau đó tìm hành còn thiếu hoặc dư trong 4 trụ (Dụng Thần / Hỷ Thần) để cân bằng.
+              </div>
+            </div>
+          `;
+        }
+
+        renderColorRecommendations();
+      }
+
+      function renderColorRecommendations() {
+        const p = appState.profile;
+        const { napAm, cungPhi, batTu } = getFullProfileAnalysis(p);
+        const mode = document.getElementById('colorSchoolSelect')?.value || 'napam';
+        let targetElement = napAm.element;
+        let schoolLabel = `Hành Nạp Âm (${napAm.napAmName})`;
+
+        if (mode === 'cungphi') {
+          targetElement = cungPhi.element;
+          schoolLabel = `Hành Cung Phi (Cung ${cungPhi.name})`;
+        } else if (mode === 'battu') {
+          targetElement = batTu.nhatChuElement;
+          schoolLabel = `Hành Nhật Chủ (Can Ngày ${batTu.nhatChuCan})`;
+        }
+
+        const info = NGU_HANH_DB[targetElement];
+        const box = document.getElementById('colorRecommendationBox');
+        if (!box) return;
+
+        box.innerHTML = `
+          <div class="text-xs text-slate-300">
+            Đang tra cứu theo: <strong class="text-amber-300">${schoolLabel} → Hành ${targetElement}</strong>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+            <div class="p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30">
+              <div class="font-bold text-emerald-300">🌟 Màu Tương Sinh (Hành ${info.duocSinh})</div>
+              <div class="text-white font-medium mt-1">${info.colorsTuongSinh.join(', ')}</div>
+              <div class="text-[10px] text-slate-400 mt-1">Ưu tiên cho xe cộ, ví tiền, trang phục quan trọng.</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-amber-950/30 border border-amber-500/30">
+              <div class="font-bold text-amber-300">✨ Màu Bản Mệnh (Hành ${targetElement})</div>
+              <div class="text-white font-medium mt-1">${info.colorsBanMenh.join(', ')}</div>
+              <div class="text-[10px] text-slate-400 mt-1">Phù hợp sử dụng hàng ngày, đồ dùng cá nhân, nội thất.</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-rose-950/30 border border-rose-500/30">
+              <div class="font-bold text-rose-300">⚖️ Màu Cần Cân Nhắc (Hành ${info.biKhac})</div>
+              <div class="text-white font-medium mt-1">${info.colorsCanNhac.join(', ')}</div>
+              <div class="text-[10px] text-slate-400 mt-1">Theo lý thuyết ${info.biKhac} khắc ${targetElement}, nên phối tiết chế.</div>
+            </div>
+          </div>
+        `;
+      }
+
+      // =====================================================
+      // RENDER MÀN HÌNH NGŨ HÀNH
+      // =====================================================
+      function renderNguHanhScreen(elementName) {
+        if (elementName) appState.selectedElement = elementName;
+        const el = appState.selectedElement;
+        const info = NGU_HANH_DB[el];
+        const card = document.getElementById('nguHanhDetailCard');
+        if (!card || !info) return;
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div>
+              <span class="text-[10px] uppercase tracking-wider text-amber-300 font-semibold">Chi Tiết Học Thuyết Ngũ Hành</span>
+              <h3 class="text-base font-bold text-white">Hành ${el} trong Vũ Trụ Quan Phương Đông</h3>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg crimson-pill text-xs font-bold text-amber-300">Hành ${el}</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">${info.nature}</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <div class="p-2.5 rounded-lg bg-emerald-950/30 border border-emerald-500/30">
+              <div class="font-bold text-emerald-300 mb-0.5">🔄 Quan Hệ Tương Sinh</div>
+              <div class="text-slate-200 text-[11px] leading-relaxed">${info.sinhExplain}</div>
+            </div>
+            <div class="p-2.5 rounded-lg bg-rose-950/30 border border-rose-500/30">
+              <div class="font-bold text-rose-300 mb-0.5">⚡ Quan Hệ Tương Khắc</div>
+              <div class="text-slate-200 text-[11px] leading-relaxed">${info.khacExplain}</div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+            <strong class="text-amber-300">Lĩnh vực & Ngành nghề liên đới:</strong> ${info.career}
+          </div>
+        `;
+      }
+
+      // =====================================================
+      // RENDER XEM TUỔI HỢP (COMPATIBILITY)
+      // =====================================================
+      function evaluateRelation(elA, elB) {
+        if (elA === elB) return { status: 'Tương Hòa (Bình hòa)', score: 85, badge: 'text-amber-300 bg-amber-500/15' };
+        if (NGU_HANH_DB[elA].sinh === elB || NGU_HANH_DB[elB].sinh === elA) {
+          return { status: 'Tương Sinh (Rất tốt)', score: 95, badge: 'text-emerald-300 bg-emerald-500/15' };
+        }
+        return { status: 'Tương Khắc (Cần dung hòa)', score: 62, badge: 'text-rose-300 bg-rose-500/15' };
+      }
+
+      function renderCompatibilityResult() {
+        const yearA = parseInt(document.getElementById('compYearA')?.value, 10) || 1997;
+        const genderA = document.getElementById('compGenderA')?.value || 'nam';
+        const yearB = parseInt(document.getElementById('compYearB')?.value, 10) || 1998;
+        const genderB = document.getElementById('compGenderB')?.value || 'nu';
+        const purpose = document.getElementById('compPurpose')?.value || 'honnhan';
+
+        const napA = calculateNapAm(yearA);
+        const napB = calculateNapAm(yearB);
+        const cungA = calculateCungPhi(yearA, genderA);
+        const cungB = calculateCungPhi(yearB, genderB);
+
+        const relNapAm = evaluateRelation(napA.element, napB.element);
+        const relCungPhi = evaluateRelation(cungA.element, cungB.element);
+        const sameTrachGroup = cungA.group === cungB.group;
+
+        const purposeLabels = {
+          honnhan: 'Tình yêu & Hôn nhân',
+          laman: 'Hợp tác Kinh doanh',
+          xaynha: 'Mượn tuổi Làm nhà / Khai trương'
+        };
+
+        const box = document.getElementById('compatibilityResultBox');
+        if (!box) return;
+
+        box.innerHTML = `
+          <div class="p-3.5 rounded-xl bg-slate-900 border border-amber-500/30 space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="text-xs font-bold text-amber-300">Kết Quả Đối Chiếu: ${purposeLabels[purpose]}</span>
+              <span class="text-[11px] px-2 py-0.5 rounded ${relNapAm.badge} font-semibold">${relNapAm.status}</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+                <div class="text-amber-300 font-bold">${yearA} (${napA.canChiName})</div>
+                <div class="text-slate-300 text-[11px] mt-0.5">• Nạp âm: ${napA.napAmName} (${napA.element})</div>
+                <div class="text-slate-300 text-[11px]">• Cung phi: ${cungA.name} (${cungA.group})</div>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+                <div class="text-amber-300 font-bold">${yearB} (${napB.canChiName})</div>
+                <div class="text-slate-300 text-[11px] mt-0.5">• Nạp âm: ${napB.napAmName} (${napB.element})</div>
+                <div class="text-slate-300 text-[11px]">• Cung phi: ${cungB.name} (${cungB.group})</div>
+              </div>
+            </div>
+
+            <div class="space-y-1.5 text-xs text-slate-300">
+              <div>1. <strong>Xét Ngũ hành Nạp Âm:</strong> Mệnh ${napA.element} và Mệnh ${napB.element} thuộc quan hệ <strong>${relNapAm.status}</strong>.</div>
+              <div>2. <strong>Xét Cung Phi Bát Trạch:</strong> Cung ${cungA.name} (${cungA.element}) và Cung ${cungB.name} (${cungB.element}) ${sameTrachGroup ? '<span class="text-emerald-400 font-semibold">cùng thuộc nhóm ' + cungA.group + ' (Thuận lợi về hướng nhà/không gian)</span>' : '<span class="text-amber-300 font-semibold">khác nhóm Đông/Tây tứ trạch (Nên ưu tiên hướng cửa theo người trụ cột)</span>'}.</div>
+              <div>3. <strong>Lời khuyên ứng dụng:</strong> Trong truyền thống phương Đông, sự hòa hợp bền vững đến từ sự thấu hiểu, tôn trọng và chia sẻ trách nhiệm. Nếu có yếu tố tương khắc, có thể dùng hành trung gian để cân bằng màu sắc không gian sống.</div>
+            </div>
+          </div>
+        `;
+      }
+
+      // =====================================================
+      // RENDER PHONG THỦY NHÀ Ở, TỬ VI & NGÀY TỐT
+      // =====================================================
+      function renderNhaOScreen() {
+        const p = appState.profile;
+        const { napAm, cungPhi } = getFullProfileAnalysis(p);
+        const dir = document.getElementById('selectDoorDir')?.value || 'Nam';
+        const room = document.getElementById('selectRoomType')?.value || 'khach';
+
+        const lbl = document.getElementById('nhaOProfileLabel');
+        if (lbl) lbl.textContent = `${p.year} (${napAm.canChiName}) - ${p.gender === 'nam' ? 'Nam' : 'Nữ'} - Cung ${cungPhi.name} (${cungPhi.group})`;
+
+        const isGood = cungPhi.goodDirs.some(d => d.startsWith(dir + ' '));
+        const matchedText = cungPhi.goodDirs.find(d => d.startsWith(dir + ' ')) || cungPhi.badDirs.find(d => d.startsWith(dir + ' ')) || dir;
+
+        const roomTips = {
+          khach: 'Phòng khách cần minh đường (khoảng trống trước cửa) thông thoáng, đủ ánh sáng tự nhiên, tránh đặt gương chiếu thẳng ra cửa chính.',
+          bep: 'Nguyên tắc Bát Trạch cho bếp là "Tọa hung hướng cát" (đặt tại cung xấu để trấn áp, quay mặt bếp về hướng tốt của gia chủ), tránh đặt bếp sát bồn rửa hoặc đối diện cửa nhà vệ sinh.',
+          ngu: 'Đầu giường nên tựa vào tường vững chắc, tránh kê ngay dưới xà ngang hoặc đối diện trực tiếp với gương soi và cửa phòng.',
+          lamviec: 'Bàn làm việc nên có điểm tựa phía sau (tường hoặc tủ sách), hướng nhìn bao quát cửa ra vào, ưu tiên màu sắc thuộc hành tương sinh.'
+        };
+
+        const box = document.getElementById('nhaOResultBox');
+        if (box) {
+          box.innerHTML = `
+            <div class="p-3.5 rounded-xl ${isGood ? 'bg-emerald-950/30 border-emerald-500/40' : 'bg-amber-950/30 border-amber-500/40'} border space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold ${isGood ? 'text-emerald-300' : 'text-amber-300'}">
+                  Hướng ${matchedText} đối với Cung ${cungPhi.name}
+                </span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-slate-900 text-white font-semibold">
+                  ${isGood ? 'Hướng Hợp Bát Trạch' : 'Hướng Cần Cân Bằng'}
+                </span>
+              </div>
+              <p class="text-xs text-slate-200 leading-relaxed">${roomTips[room]}</p>
+              <div class="text-[11px] text-slate-300 pt-1 border-t border-slate-800">
+                🎨 <strong>Gợi ý màu nội thất theo Cung ${cungPhi.name} (Hành ${cungPhi.element}):</strong> Nên kết hợp tông màu <strong>${NGU_HANH_DB[cungPhi.element].colorsTuongSinh.join(', ')}</strong> hoặc <strong>${NGU_HANH_DB[cungPhi.element].colorsBanMenh.join(', ')}</strong>.
+              </div>
+            </div>
+          `;
+        }
+
+        // Render Tu Vi Subview
+        const tuviBox = document.getElementById('tuViContentBox');
+        if (tuviBox) {
+          const elInfo = NGU_HANH_DB[napAm.element];
+          tuviBox.innerHTML = `
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+              <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+                <div class="font-bold text-amber-300">💼 Công việc & Sự nghiệp</div>
+                <p class="text-slate-300 leading-relaxed">Người mệnh <strong>${napAm.napAmName}</strong> phù hợp phát triển các lĩnh vực: ${elInfo.career} Trong giai đoạn hiện tại, nên ưu tiên lập kế hoạch rõ ràng và kiểm soát rủi ro.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+                <div class="font-bold text-emerald-300">🪙 Tài chính & Quản trị</div>
+                <p class="text-slate-300 leading-relaxed">Tài lộc bền vững dựa trên năng lực chuyên môn và kỷ luật tích lũy. Không quyết định đầu tư vội vàng theo cảm xúc nhất thời.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+                <div class="font-bold text-rose-300">❤️ Tình cảm & Gia đạo</div>
+                <p class="text-slate-300 leading-relaxed">Dành thời gian lắng nghe và chia sẻ thẳng thắn với người thân. Sự ôn hòa giúp hóa giải các bất đồng nhỏ trong sinh hoạt.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+                <div class="font-bold text-blue-300">🌿 Lời khuyên cuộc sống</div>
+                <p class="text-slate-300 leading-relaxed">Giữ cân bằng giữa làm việc và nghỉ ngơi, bố trí góc làm việc gọn gàng, thông thoáng để duy trì sự tập trung.</p>
+              </div>
+            </div>
+          `;
+        }
+
+        renderNgayTotCheck();
+      }
+
+      function renderNgayTotCheck() {
+        const dateVal = document.getElementById('inputCheckDate')?.value || '2026-10-25';
+        const parts = dateVal.split('-');
+        const y = parseInt(parts[0], 10) || 2026;
+        const m = parseInt(parts[1], 10) || 10;
+        const d = parseInt(parts[2], 10) || 25;
+
+        const dayBatTu = calculateBatTu(d, m, y, 'thin');
+        const userNapAm = calculateNapAm(appState.profile.year);
+        const rel = evaluateRelation(dayBatTu.nhatChuElement, userNapAm.element);
+
+        const box = document.getElementById('ngayTotContentBox');
+        if (!box) return;
+        box.innerHTML = `
+          <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-2 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-white">Ngày ${d}/${m}/${y} — Ngày ${dayBatTu.dayCanChi}</span>
+              <span class="px-2 py-0.5 rounded ${rel.badge} font-semibold">${rel.status}</span>
+            </div>
+            <div class="text-slate-300">
+              • Ngũ hành Thiên Can của ngày: <strong>${dayBatTu.nhatChuCan} (${dayBatTu.nhatChuElement})</strong>.<br/>
+              • Đối chiếu với Nạp Âm của bạn (<strong>${userNapAm.napAmName} - ${userNapAm.element}</strong>): <strong>${rel.status}</strong>.<br/>
+              • Giờ tốt tham khảo trong ngày: Giờ Thìn (07h-09h), Giờ Tỵ (09h-11h), Giờ Thân (15h-17h).
+            </div>
+          </div>
+        `;
+      }
+
+      // =====================================================
+      // TRỢ LÝ PHONG THỦY AI (7-STEP RULE-GROUNDED PIPELINE)
+      // =====================================================
+      function appendChatMessage(role, htmlText) {
+        const list = document.getElementById('aiChatMessages');
+        if (!list) return;
+        const wrap = document.createElement('div');
+        if (role === 'user') {
+          wrap.className = 'flex justify-end';
+          wrap.innerHTML = `<div class="max-w-[85%] rounded-2xl rounded-tr-sm crimson-pill px-3.5 py-2.5 text-xs text-white">${htmlText}</div>`;
+        } else {
+          wrap.className = 'flex justify-start';
+          wrap.innerHTML = `<div class="max-w-[92%] rounded-2xl rounded-tl-sm bg-slate-900 border border-amber-500/30 px-3.5 py-2.5 text-xs text-slate-200 space-y-1.5 leading-relaxed">${htmlText}</div>`;
+        }
+        list.appendChild(wrap);
+        list.scrollTop = list.scrollHeight;
+      }
+
+      function processAiQuestion(rawQuestion) {
+        const q = rawQuestion.trim();
+        if (!q) return;
+        appendChatMessage('user', q);
+
+        // Bước 1 & 2: Trích xuất năm sinh trong câu hỏi (nếu có), nếu không lấy hồ sơ hiện tại
+        const yearMatch = q.match(/\b(19[3-9]\d|20[0-3]\d)\b/);
+        const targetYear = yearMatch ? parseInt(yearMatch[1], 10) : appState.profile.year;
+        const targetGender = q.toLowerCase().includes('nữ') ? 'nu' : appState.profile.gender;
+
+        // Bước 3 & 4: Tính toán bằng Rule Engine chính xác (không để AI tự đoán)
+        const napAm = calculateNapAm(targetYear);
+        const cungPhi = calculateCungPhi(targetYear, targetGender);
+        const elInfo = NGU_HANH_DB[napAm.element];
+
+        const lowerQ = q.toLowerCase();
+        let responseHtml = '';
+
+        if (lowerQ.includes('tương sinh') || lowerQ.includes('tương khắc')) {
+          responseHtml = `
+            <div class="text-[10px] text-amber-300 font-semibold uppercase">[Nguồn: Học thuyết Ngũ Hành Cổ Học • Rule Engine v1.0]</div>
+            <div><strong>Quy luật Ngũ Hành Tương Sinh & Tương Khắc</strong> được xác định như sau:</div>
+            <div>• <strong>Tương sinh (Nuôi dưỡng, thúc đẩy):</strong> Mộc sinh Hỏa → Hỏa sinh Thổ → Thổ sinh Kim → Kim sinh Thủy → Thủy sinh Mộc.</div>
+            <div>• <strong>Tương khắc (Chế ước, giữ cân bằng):</strong> Mộc khắc Thổ → Thổ khắc Thủy → Thủy khắc Hỏa → Hỏa khắc Kim → Kim khắc Mộc.</div>
+            <div class="text-[11px] text-slate-400">Lưu ý: Tương khắc không có nghĩa là xấu tuyệt đối, mà là cơ chế giữ sự cân bằng trong tự nhiên.</div>
+          `;
+        } else if (lowerQ.includes('màu') || lowerQ.includes('xe')) {
+          responseHtml = `
+            <div class="text-[10px] text-amber-300 font-semibold uppercase">[Đã tra cứu công thức: Năm ${targetYear} (${napAm.canChiName})]</div>
+            <div>Theo trường phái <strong>Nạp Âm Lục Thập Hoa Giáp</strong>, người sinh năm <strong>${targetYear} (${napAm.canChiName})</strong> thuộc mệnh <strong>${napAm.napAmName} (Hành ${napAm.element})</strong>:</div>
+            <div>• <strong>Màu tương sinh (${elInfo.duocSinh} sinh ${napAm.element}):</strong> ${elInfo.colorsTuongSinh.join(', ')}.</div>
+            <div>• <strong>Màu bản mệnh (Hành ${napAm.element}):</strong> ${elInfo.colorsBanMenh.join(', ')}.</div>
+            <div>• <strong>Màu cần tiết chế (${elInfo.biKhac} khắc ${napAm.element}):</strong> ${elInfo.colorsCanNhac.join(', ')}.</div>
+            <div class="text-[11px] text-slate-400">Nếu xét theo <strong>Cung Phi Bát Trạch (${targetGender === 'nam' ? 'Nam' : 'Nữ'})</strong>, bạn thuộc <strong>Cung ${cungPhi.name} (Hành ${cungPhi.element})</strong>. Khi chọn xe cộ cần kết hợp thêm độ an toàn kỹ thuật và sở thích thực tế.</div>
+          `;
+        } else if (lowerQ.includes('nhà') || lowerQ.includes('hướng')) {
+          responseHtml = `
+            <div class="text-[10px] text-amber-300 font-semibold uppercase">[Đã tra cứu Bát Trạch: Năm ${targetYear} • ${targetGender === 'nam' ? 'Nam' : 'Nữ'}]</div>
+            <div>Với người sinh năm <strong>${targetYear} (${napAm.canChiName})</strong>, giới tính <strong>${targetGender === 'nam' ? 'Nam' : 'Nữ'}</strong>:</div>
+            <div>• <strong>Cung Phi Bát Trạch:</strong> Cung <strong>${cungPhi.name}</strong> (Hành ${cungPhi.element}), thuộc nhóm <strong>${cungPhi.group}</strong>.</div>
+            <div>• <strong>4 hướng tốt (Tứ Cát):</strong> ${cungPhi.goodDirs.join(', ')}.</div>
+            <div>• <strong>Nguyên tắc quan trọng:</strong> Ngoài hướng cửa chính, phong thủy nhà ở hiện đại ưu tiên sự thông thoáng khí (Tàng phong tụ khí), ánh sáng tự nhiên và bố cục gọn gàng.</div>
+          `;
+        } else {
+          responseHtml = `
+            <div class="text-[10px] text-amber-300 font-semibold uppercase">[Kết quả từ Bộ tính toán Phong Thủy • Năm ${targetYear}]</div>
+            <div>Hệ thống đã tính toán dữ liệu cho năm sinh <strong>${targetYear} (${napAm.canChiName})</strong> theo từng phương pháp riêng biệt:</div>
+            <div>1. <strong>Ngũ hành Nạp Âm (Năm sinh):</strong> Mệnh <strong>${napAm.napAmName}</strong> (${napAm.napAmMeaning}) — thuộc hành <strong>${napAm.element}</strong>.</div>
+            <div>2. <strong>Cung Phi Bát Trạch (${targetGender === 'nam' ? 'Nam' : 'Nữ'}):</strong> Cung <strong>${cungPhi.name}</strong> (Hành <strong>${cungPhi.element}</strong>) — nhóm <strong>${cungPhi.group}</strong>.</div>
+            <div>3. <strong>Quan hệ Ngũ hành (${napAm.element}):</strong> Tương sinh với <strong>${elInfo.duocSinh}, ${elInfo.sinh}</strong>; tương khắc với <strong>${elInfo.biKhac}, ${elInfo.khac}</strong>.</div>
+            <div class="text-[11px] text-slate-400">Bạn có thể nhập thêm Ngày, Tháng, Giờ sinh tại mục "Bản mệnh" để xem thêm Nhật Chủ Bát Tự.</div>
+          `;
+        }
+
+        appendChatMessage('assistant', responseHtml);
+      }
+
+      // =====================================================
+      // HỆ THỐNG QUẢNG CÁO & TẦN SUẤT (AD FREQUENCY MANAGER)
+      // =====================================================
+      function updateAdStatsUI() {
+        const s = appState.adConfig.stats;
+        document.getElementById('statBannerImpr').textContent = String(s.bannerImpr);
+        document.getElementById('statInterImpr').textContent = String(s.interImpr);
+        document.getElementById('statSponsorClicks').textContent = String(s.sponsorClicks);
+        document.getElementById('statBlockedAds').textContent = String(s.blockedAds);
+
+        const elapsedSec = Math.floor((Date.now() - appState.adConfig.lastAdTimestamp) / 1000);
+        const remain = Math.max(0, appState.adConfig.cooldownSec - elapsedSec);
+        const badge = document.getElementById('adTimerBadge');
+        if (badge) {
+          badge.textContent = remain > 0 ? `Ad Cooldown: ${remain}s` : 'Ad: Đủ điều kiện chuyển trang';
+        }
+      }
+
+      function tryShowTransitionInterstitial(forceShow) {
+        const cfg = appState.adConfig;
+        const elapsedSec = Math.floor((Date.now() - cfg.lastAdTimestamp) / 1000);
+
+        if (!forceShow) {
+          // Không bật quảng cáo nếu chưa đủ số lần chuyển trang hoặc chưa hết thời gian Cooldown
+          if (cfg.navActionCount < cfg.actionCap || elapsedSec < cfg.cooldownSec) {
+            if (elapsedSec < cfg.cooldownSec && cfg.navActionCount >= cfg.actionCap) {
+              cfg.stats.blockedAds += 1;
+            }
+            updateAdStatsUI();
+            return;
+          }
+        }
+
+        // Hiển thị Interstitial Modal tại điểm chuyển tiếp an toàn
+        cfg.lastAdTimestamp = Date.now();
+        cfg.navActionCount = 0;
+        cfg.stats.interImpr += 1;
+        document.getElementById('modalCooldownInfo').textContent = `${cfg.cooldownSec}s`;
+        const modal = document.getElementById('interstitialModal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+        }
+        updateAdStatsUI();
+      }
+
+      function renderCampaignsAndHistory() {
+        const campBox = document.getElementById('campaignListBox');
+        if (campBox) {
+          campBox.innerHTML = appState.campaigns.map(c => `
+            <div class="p-2.5 rounded-xl bg-slate-950 border ${c.active ? 'border-amber-500/50' : 'border-slate-800'} flex items-center justify-between gap-2 text-xs">
+              <div>
+                <div class="font-bold text-white">${c.name} <span class="text-[10px] text-amber-300">(${c.category})</span></div>
+                <div class="text-[11px] text-slate-400">${c.desc}</div>
+              </div>
+              <button type="button" data-toggle-camp="${c.id}" class="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold ${c.active ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-slate-800 text-slate-400'}">
+                ${c.active ? 'Đang chạy' : 'Kích hoạt'}
+              </button>
+            </div>
+          `).join('');
+        }
+
+        const histBox = document.getElementById('historyListBox');
+        if (histBox) {
+          if (appState.history.length === 0) {
+            histBox.innerHTML = `<div class="text-xs text-slate-400 py-2">Đã xóa toàn bộ lịch sử tra cứu cá nhân trên thiết bị.</div>`;
+          } else {
+            histBox.innerHTML = appState.history.map(h => `
+              <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs">
+                <div>
+                  <span class="font-bold text-amber-300">${h.year} (${h.canChi})</span>
+                  <span class="text-slate-300 ml-1">• Nạp âm: ${h.napAm} • Cung: ${h.cungPhi}</span>
+                </div>
+                <span class="text-[10px] text-slate-400">${h.time}</span>
+              </div>
+            `).join('');
+          }
+        }
+      }
+
+      // =====================================================
+      // ĐIỀU HƯỚNG MÀN HÌNH (NAVIGATION)
+      // =====================================================
+      function navigateTo(screenId, options = {}) {
+        const screens = ['home', 'banmenh', 'nguhanh', 'tuoihop', 'nhao', 'ai', 'admin'];
+        let target = screenId;
+
+        if (screenId === 'mausac') {
+          target = 'banmenh';
+        } else if (screenId === 'tuvi') {
+          target = 'nhao';
+        }
+
+        if (!screens.includes(target)) target = 'home';
+
+        screens.forEach(s => {
+          const el = document.getElementById('screen-' + s);
+          if (el) {
+            if (s === target) el.classList.remove('hidden');
+            else el.classList.add('hidden');
+          }
+        });
+
+        // Update bottom nav active state
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+          const navTarget = btn.getAttribute('data-nav');
+          if (navTarget === target || (target === 'nhao' && navTarget === 'home')) {
+            // Keep accurate highlight
+          }
+          if (navTarget === target) {
+            btn.className = 'nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-amber-400 bg-amber-500/10';
+          } else {
+            btn.className = 'nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-400 hover:text-slate-200';
+          }
+        });
+
+        appState.currentScreen = target;
+        appState.adConfig.navActionCount += 1;
+        if (appState.adConfig.bannerEnabled) {
+          appState.adConfig.stats.bannerImpr += 1;
+        }
+
+        // Sub-navigation handling
+        if (screenId === 'mausac') {
+          setTimeout(() => {
+            document.getElementById('colorLookupAnchor')?.scrollIntoView({ behavior: 'smooth' });
+          }, 80);
+        }
+        if (screenId === 'tuvi') {
+          const tab = options.tab || 'homnay';
+          switchNhaOTab(tab === 'ngaytot' ? 'ngaytot' : 'tuvi');
+        }
+
+        // Check compliant transition ad
+        tryShowTransitionInterstitial(false);
+        updateAdStatsUI();
+      }
+
+      function switchNhaOTab(tabName) {
+        const map = {
+          battrach: 'subview-battrach',
+          tuvi: 'subview-tuvi',
+          ngaytot: 'subview-ngaytot'
+        };
+        Object.keys(map).forEach(k => {
+          const el = document.getElementById(map[k]);
+          if (el) {
+            if (k === tabName) el.classList.remove('hidden');
+            else el.classList.add('hidden');
+          }
+        });
+        document.querySelectorAll('.nhao-tab-btn').forEach(btn => {
+          if (btn.getAttribute('data-nhao-tab') === tabName) {
+            btn.className = 'nhao-tab-btn py-2 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+          } else {
+            btn.className = 'nhao-tab-btn py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white';
+          }
+        });
+      }
+
+      // =====================================================
+      // KHỞI TẠO SỰ KIỆN (EVENT LISTENERS)
+      // =====================================================
+      function initEvents() {
+        // Delegated navigation clicks
+        document.body.addEventListener('click', (e) => {
+          const navBtn = e.target.closest('[data-nav]');
+          if (navBtn) {
+            const target = navBtn.getAttribute('data-nav');
+            const tab = navBtn.getAttribute('data-tab');
+            navigateTo(target, { tab });
+            return;
+          }
+
+          const presetBtn = e.target.closest('[data-preset-year]');
+          if (presetBtn) {
+            const y = parseInt(presetBtn.getAttribute('data-preset-year'), 10);
+            document.getElementById('inputYear').value = String(y);
+            appState.profile.year = y;
+            renderBanMenhScreen();
+            updateHomeHeaderSummary();
+            showToast(`Đã chọn năm sinh ${y}`);
+            return;
+          }
+
+          const schoolBtn = e.target.closest('[data-school-tab]');
+          if (schoolBtn) {
+            appState.currentSchoolTab = schoolBtn.getAttribute('data-school-tab');
+            renderBanMenhScreen();
+            return;
+          }
+
+          const elBtn = e.target.closest('[data-select-el]');
+          if (elBtn) {
+            renderNguHanhScreen(elBtn.getAttribute('data-select-el'));
+            return;
+          }
+
+          const svgNode = e.target.closest('[data-element]');
+          if (svgNode) {
+            renderNguHanhScreen(svgNode.getAttribute('data-element'));
+            return;
+          }
+
+          const nhaoTabBtn = e.target.closest('[data-nhao-tab]');
+          if (nhaoTabBtn) {
+            switchNhaOTab(nhaoTabBtn.getAttribute('data-nhao-tab'));
+            return;
+          }
+
+          const aiPromptBtn = e.target.closest('[data-ai-prompt]');
+          if (aiPromptBtn) {
+            processAiQuestion(aiPromptBtn.getAttribute('data-ai-prompt'));
+            return;
+          }
+
+          const adminTabBtn = e.target.closest('[data-admin-tab]');
+          if (adminTabBtn) {
+            const t = adminTabBtn.getAttribute('data-admin-tab');
+            document.getElementById('adminSubviewAds').classList.toggle('hidden', t !== 'ads');
+            document.getElementById('adminSubviewPrivacy').classList.toggle('hidden', t !== 'privacy');
+            document.querySelectorAll('.admin-tab-btn').forEach(b => {
+              if (b.getAttribute('data-admin-tab') === t) {
+                b.className = 'admin-tab-btn py-2 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+              } else {
+                b.className = 'admin-tab-btn py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white';
+              }
+            });
+            return;
+          }
+
+          const campToggleBtn = e.target.closest('[data-toggle-camp]');
+          if (campToggleBtn) {
+            const id = campToggleBtn.getAttribute('data-toggle-camp');
+            appState.campaigns.forEach(c => { c.active = (c.id === id); });
+            renderCampaignsAndHistory();
+            updateHomeHeaderSummary();
+            showToast('Đã cập nhật chiến dịch đối tác trên Trang chủ!');
+            return;
+          }
+        });
+
+        // Form Ban Menh Submit
+        document.getElementById('formBanMenh')?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const day = parseInt(document.getElementById('inputDay').value, 10) || 15;
+          const month = parseInt(document.getElementById('inputMonth').value, 10) || 8;
+          const year = parseInt(document.getElementById('inputYear').value, 10) || 1997;
+          const gender = document.getElementById('inputGender').value || 'nam';
+          const calendar = document.getElementById('inputCalendar').value || 'duong';
+          const hour = document.getElementById('inputHour').value || 'thin';
+
+          appState.profile = { day, month, year, gender, calendar, hour };
+          const analysis = getFullProfileAnalysis(appState.profile);
+
+          appState.history.unshift({
+            year,
+            gender,
+            canChi: analysis.napAm.canChiName,
+            napAm: `${analysis.napAm.napAmName} (${analysis.napAm.element})`,
+            cungPhi: `${analysis.cungPhi.name} (${analysis.cungPhi.element})`,
+            time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+          });
+          appState.history = appState.history.slice(0, 8);
+
+          saveState();
+          renderBanMenhScreen();
+          renderNhaOScreen();
+          updateHomeHeaderSummary();
+          renderCampaignsAndHistory();
+          showToast(`Đã lưu bản mệnh năm ${year} (${analysis.napAm.canChiName})`);
+        });
+
+        // Color School Select
+        document.getElementById('colorSchoolSelect')?.addEventListener('change', () => {
+          renderColorRecommendations();
+        });
+
+        // Compatibility Button
+        document.getElementById('btnCalcCompatibility')?.addEventListener('click', () => {
+          renderCompatibilityResult();
+          showToast('Đã phân tích độ tương hợp theo 3 tiêu chí');
+        });
+
+        // Nha O Selectors
+        document.getElementById('selectDoorDir')?.addEventListener('change', renderNhaOScreen);
+        document.getElementById('selectRoomType')?.addEventListener('change', renderNhaOScreen);
+        document.getElementById('btnCheckDate')?.addEventListener('click', renderNgayTotCheck);
+
+        // AI Chat Submit
+        document.getElementById('formAiChat')?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const inp = document.getElementById('inputAiQuestion');
+          if (!inp || !inp.value.trim()) return;
+          processAiQuestion(inp.value);
+          inp.value = '';
+        });
+
+        document.getElementById('btnClearChat')?.addEventListener('click', () => {
+          const list = document.getElementById('aiChatMessages');
+          if (list) list.innerHTML = '';
+          initWelcomeChat();
+        });
+
+        // Sponsor Click
+        document.getElementById('btnSponsorClick')?.addEventListener('click', () => {
+          appState.adConfig.stats.sponsorClicks += 1;
+          updateAdStatsUI();
+          showToast('Đã ghi nhận 1 lượt nhấp Quảng cáo Đối tác (Direct Sponsor CPC)');
+        });
+
+        // Admin Ad Config Controls
+        document.getElementById('rangeAdCooldown')?.addEventListener('input', (e) => {
+          const val = parseInt(e.target.value, 10);
+          appState.adConfig.cooldownSec = val;
+          document.getElementById('lblCooldownVal').textContent = `${val} giây`;
+          updateAdStatsUI();
+        });
+
+        document.getElementById('rangeActionCap')?.addEventListener('input', (e) => {
+          const val = parseInt(e.target.value, 10);
+          appState.adConfig.actionCap = val;
+          document.getElementById('lblActionCapVal').textContent = `${val} lần`;
+        });
+
+        document.getElementById('chkBannerEnabled')?.addEventListener('change', (e) => {
+          const enabled = e.target.checked;
+          appState.adConfig.bannerEnabled = enabled;
+          document.getElementById('stickyBannerAd').classList.toggle('hidden', !enabled);
+        });
+
+        document.getElementById('btnTriggerTestInterstitial')?.addEventListener('click', () => {
+          tryShowTransitionInterstitial(true);
+        });
+
+        document.getElementById('btnCloseInterstitial')?.addEventListener('click', () => {
+          const modal = document.getElementById('interstitialModal');
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        });
+
+        document.getElementById('btnClickInterstitial')?.addEventListener('click', () => {
+          appState.adConfig.stats.sponsorClicks += 1;
+          updateAdStatsUI();
+          const modal = document.getElementById('interstitialModal');
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+          showToast('Đã ghi nhận lượt tương tác quảng cáo thử nghiệm');
+        });
+
+        document.getElementById('formAddCampaign')?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('campName').value.trim();
+          const category = document.getElementById('campCategory').value.trim();
+          const desc = document.getElementById('campDesc').value.trim();
+          if (!name || !desc) return;
+
+          appState.campaigns.forEach(c => { c.active = false; });
+          appState.campaigns.unshift({
+            id: 'c_' + Date.now(),
+            name,
+            category: category || 'Đối tác',
+            desc,
+            active: true,
+            clicks: 0
+          });
+          document.getElementById('campName').value = '';
+          document.getElementById('campCategory').value = '';
+          document.getElementById('campDesc').value = '';
+          renderCampaignsAndHistory();
+          updateHomeHeaderSummary();
+          showToast('Đã tạo và kích hoạt chiến dịch quảng cáo mới!');
+        });
+
+        document.getElementById('btnClearHistory')?.addEventListener('click', () => {
+          appState.history = [];
+          saveState();
+          renderCampaignsAndHistory();
+          showToast('Đã xóa sạch lịch sử tra cứu cá nhân trên thiết bị!');
+        });
+
+        // Top View Switchers
+        document.getElementById('btnViewMobile')?.addEventListener('click', () => {
+          const wrap = document.getElementById('deviceWrapper');
+          wrap.classList.remove('max-w-5xl');
+          wrap.classList.add('max-w-[440px]');
+          document.getElementById('btnViewMobile').className = 'px-2.5 py-1 rounded text-xs font-medium transition bg-amber-500/20 text-amber-300 border border-amber-500/40';
+          document.getElementById('btnViewFull').className = 'px-2.5 py-1 rounded text-xs font-medium transition text-slate-400 hover:text-slate-200';
+        });
+
+        document.getElementById('btnViewFull')?.addEventListener('click', () => {
+          const wrap = document.getElementById('deviceWrapper');
+          wrap.classList.remove('max-w-[440px]');
+          wrap.classList.add('max-w-5xl');
+          document.getElementById('btnViewFull').className = 'px-2.5 py-1 rounded text-xs font-medium transition bg-amber-500/20 text-amber-300 border border-amber-500/40';
+          document.getElementById('btnViewMobile').className = 'px-2.5 py-1 rounded text-xs font-medium transition text-slate-400 hover:text-slate-200';
+        });
+
+        document.getElementById('btnQuickAdmin')?.addEventListener('click', () => {
+          navigateTo('admin');
+        });
+      }
+
+      function initWelcomeChat() {
+        appendChatMessage('assistant', `
+          <div class="text-[10px] text-amber-300 font-semibold uppercase">Chào mừng bạn đến với Trợ Lý Phong Thủy AI</div>
+          <div>Hệ thống hoạt động theo nguyên tắc <strong>Rule-Grounded AI</strong>:</div>
+          <div>1. Mọi phép tính Can Chi, Nạp Âm, Cung Phi Bát Trạch và Nhật Chủ đều do <strong>Bộ tính toán phần mềm</strong> xác định chính xác.</div>
+          <div>2. AI chỉ đóng vai trò diễn giải sang ngôn ngữ tự nhiên dễ hiểu, không tự suy đoán hoặc bịa đặt kết quả.</div>
+          <div class="text-amber-200">Hãy chạm vào một câu hỏi gợi ý phía trên hoặc nhập năm sinh bất kỳ (ví dụ: <em>"Tôi sinh năm 1997 mệnh gì?"</em>).</div>
+        `);
+      }
+
+      // Khởi chạy toàn bộ giao diện khi tải trang
+      window.addEventListener('DOMContentLoaded', () => {
+        updateHomeHeaderSummary();
+        renderBanMenhScreen();
+        renderNguHanhScreen('Thủy');
+        renderCompatibilityResult();
+        renderNhaOScreen();
+        renderCampaignsAndHistory();
+        initWelcomeChat();
+        initEvents();
+        setInterval(updateAdStatsUI, 2000);
+      });
+    })();
+  </script>
+</body>
+</html>
