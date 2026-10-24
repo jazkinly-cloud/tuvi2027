@@ -4,7 +4,7 @@ import streamlit.components.v1 as components
 from pathlib import Path
 
 st.set_page_config(
-    page_title="Phong Thủy AI",
+    page_title="Phong Thủy 2027",
     layout="wide"
 )
 
