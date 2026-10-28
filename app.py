@@ -11,7 +11,7 @@ from pathlib import Path
 
 st.set_page_config(
     page_title="Phong Thủy AI 2027",
-    page_icon="🔮",
+    page_icon="logo_phong_thuy_ai.png",
     layout="wide"
 )
 
