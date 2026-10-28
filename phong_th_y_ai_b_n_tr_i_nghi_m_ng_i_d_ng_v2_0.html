@@ -274,8 +274,8 @@
                 </svg>
               </div>
               <div class="flex-1 min-w-0">
-                <h4 class="text-xs font-bold text-white truncate" id="sponsorTitle">SaigonDoor Cửa Phong Thủy chính hãng</h4>
-                <p class="text-[11px] text-slate-300 line-clamp-2" id="sponsorDesc">Khám phá cửa thép vân gỗ, cửa composite và các giải pháp cửa phong thủy cho ngôi nhà hiện đại.</p>
+                <h4 class="text-xs font-bold text-white truncate" id="sponsorTitle">SaigonDoor – Cửa chính hãng</h4>
+                <p class="text-[11px] text-slate-300 line-clamp-2" id="sponsorDesc">Khám phá cửa thép vân gỗ, cửa composite và các giải pháp cửa cho ngôi nhà hiện đại.</p>
               </div>
               <button type="button" id="btnSponsorClick" class="shrink-0 px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-semibold">
                 Xem
@@ -752,7 +752,7 @@
       <div id="stickyBannerAd" class="bg-[#090D16] border-t border-amber-500/20 px-3 py-1.5 flex items-center justify-between gap-2">
         <div class="flex items-center gap-2 min-w-0">
           <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 border border-amber-500/30 shrink-0">Quảng cáo</span>
-          <span class="text-[11px] text-slate-300 truncate" id="stickyBannerText">SaigonDoor Cửa phong thủy thép vân gỗ & cửa composite</span>
+          <span class="text-[11px] text-slate-300 truncate" id="stickyBannerText">SaigonDoor • Cửa thép vân gỗ & cửa composite</span>
         </div>
         <button type="button" id="btnStickyBannerClick" class="text-[10px] text-amber-300/90 hover:text-amber-200 shrink-0">Tìm hiểu ›</button>
       </div>
@@ -806,8 +806,8 @@
             <circle cx="82" cy="68" r="3" fill="#ffe0a0"/>
           </svg>
         </div>
-        <h3 class="font-serif-oriental text-base font-bold text-white">SaigonDoor Giải pháp cửa phong thủy cho ngôi nhà</h3>
-        <p class="text-xs text-slate-300">Khám phá cửa thép vân gỗ, cửa composite và các mẫu cửa phong thủy phù hợp cho nhà phố, căn hộ, phòng ngủ.</p>
+        <h3 class="font-serif-oriental text-base font-bold text-white">SaigonDoor – Giải pháp cửa cho ngôi nhà</h3>
+        <p class="text-xs text-slate-300">Khám phá cửa thép vân gỗ, cửa composite và các mẫu cửa phù hợp cho nhà phố, căn hộ, phòng ngủ.</p>
       </div>
       <div class="flex gap-2">
         <button type="button" id="btnCloseInterstitial" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white">
@@ -843,7 +843,7 @@
           <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
             <div class="flex justify-between text-xs">
               <span class="text-slate-300">Thời gian nghỉ tối thiểu (Cooldown):</span>
-              <span id="lblCooldownVal" class="text-amber-300 font-bold">30 giây</span>
+              <span id="lblCooldownVal" class="text-amber-300 font-bold">90 giây</span>
             </div>
             <input id="rangeAdCooldown" type="range" min="30" max="180" step="15" value="90" class="w-full accent-amber-400" />
           </div>
@@ -2589,15 +2589,39 @@
         });
 
         const saigonDoorUrl = 'https://saigondoor.vn/';
+        const adClickLoggerUrl = 'https://script.google.com/macros/s/AKfycbx8aS2ecv6JeFbDCq8h6qa9y3ZrbgnGH-uaQ7Ibqr3hS1RdEHLIiQdstwPtKlF2X7gY/exec';
+
+        // Gửi lượt nhấp đến Google Apps Script bằng GET beacon (không cần CORS).
+        // Việc mở website vẫn diễn ra trực tiếp trong thao tác click của người dùng.
+        function logSaigonDoorAdClick(locationName, adName) {
+          try {
+            const params = new URLSearchParams({
+              location: locationName,
+              ad: adName,
+              action: 'click',
+              target: saigonDoorUrl,
+              page: window.location.href
+            });
+            const beacon = new Image();
+            beacon.referrerPolicy = 'no-referrer-when-downgrade';
+            beacon.src = adClickLoggerUrl + '?' + params.toString();
+          } catch (err) {
+            console.warn('Không gửi được log click quảng cáo:', err);
+          }
+        }
+
         document.getElementById('btnSponsorClick')?.addEventListener('click', () => {
+          logSaigonDoorAdClick('Quảng cáo nhà tài trợ phía trên', 'SaigonDoor');
           window.open(saigonDoorUrl, '_blank', 'noopener,noreferrer');
         });
 
         document.getElementById('btnStickyBannerClick')?.addEventListener('click', () => {
+          logSaigonDoorAdClick('Banner quảng cáo cố định phía dưới', 'SaigonDoor');
           window.open(saigonDoorUrl, '_blank', 'noopener,noreferrer');
         });
 
         document.getElementById('btnClickInterstitial')?.addEventListener('click', () => {
+          logSaigonDoorAdClick('Quảng cáo xen kẽ', 'SaigonDoor');
           const modal = document.getElementById('interstitialModal');
           modal?.classList.add('hidden');
           modal?.classList.remove('flex');
