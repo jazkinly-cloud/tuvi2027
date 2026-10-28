@@ -1,4 +1,10 @@
+import streamlit as st
 
+st.set_page_config(
+    page_title="Phong Thủy AI 2027",
+    page_icon="logo_phong_thuy_ai.png",
+    layout="wide"
+)
 import streamlit as st
 import streamlit.components.v1 as components
 from pathlib import Path
